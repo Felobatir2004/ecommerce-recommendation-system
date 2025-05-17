@@ -1,0 +1,28 @@
+{
+  "name": "ecommerce-recommendation-system",
+  "version": "1.0.0",
+  "description": "website ecommerce recommendation system graduation project",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon --env-file=./src/config/.env ./index.js",
+    "start": "node ./index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.6.1",
+    "express": "^4.21.2",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.12.1",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.2",
+    "nanoid": "^5.1.5",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.10.0",
+    "streamifier": "^0.1.1"
+  }
+}
