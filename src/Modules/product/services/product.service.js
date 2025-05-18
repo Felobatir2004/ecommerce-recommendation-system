@@ -81,7 +81,7 @@ export const getproductsbycategory=async(req,res,next)=>{
     })
     if(!checkCategory) return next(new Error("Category not found",{cause: 404}))
 
-    let products =await dbService.find({model:Product,filter:{category:category}})
+    const products =await dbService.find({model:Product,filter:{category:category}})
     if(!products)
     {
         res.status(404).json({message:"product not found"})
