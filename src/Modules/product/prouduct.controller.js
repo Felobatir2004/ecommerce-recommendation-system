@@ -13,9 +13,9 @@ router.post(
     asyncHandler(products.addproduct)
 )
 router.get(
-    '/getproduct/:id',
+    '/getproductById/:id',
     authentication(),
-    asyncHandler(products.getproduct)
+    asyncHandler(products.getproductById)
 )
 router.get(
     '/getProductByName',

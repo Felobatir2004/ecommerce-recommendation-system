@@ -55,7 +55,7 @@ export const addproduct = async (req, res, next) => {
 
     res.status(201).json({ message: "Product created successfully" , product });
 }
-export const getproduct=async(req,res,next)=>{
+export const getproductById=async(req,res,next)=>{
     let product =await Product.findById(req.params.id)
     if(!product)
     {
@@ -89,7 +89,11 @@ export const getproductsbycategory=async(req,res,next)=>{
     res.json({message:"product gets successfly",products})
 }
 export const getallproduct=async(req,res,next)=>{
-    let products =await Product.find()
+    const products =await Product.find()
+    if(!products)
+    {
+        res.status(404).json({message:"product not found"})
+    }
     res.json({message:"product gets successfly",products})
 }
 export const deleteproduct=async(req,res,next)=>{
