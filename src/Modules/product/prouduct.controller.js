@@ -23,6 +23,11 @@ router.get(
     asyncHandler(products.getproductbyName)
 )
 router.get(
+    '/getProductsByCategory',
+    authentication(),
+    asyncHandler(products.getproductbyName)
+)
+router.get(
     '/getallproduct',
     authentication(),
     asyncHandler(products.getallproduct)
