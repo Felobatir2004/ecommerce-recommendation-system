@@ -57,11 +57,20 @@ export const addproduct = async (req, res, next) => {
 }
 export const getproduct=async(req,res,next)=>{
     let product =await Product.findById(req.params.id)
-    res.json({message:"product gets successfly",product})
     if(!product)
     {
         res.status(404).json({message:"product not found"})
     }
+    res.json({message:"product gets successfly",product})
+}
+export const getproductbyName=async(req,res,next)=>{
+    const {name}=req.body
+    let product =await dbService.findOne({model:Product,filter:{name:name}})
+    if(!product)
+    {
+        res.status(404).json({message:"product not found"})
+    }
+    res.json({message:"product gets successfly",product})
 }
 export const getallproduct=async(req,res,next)=>{
     let products =await Product.find()

@@ -18,6 +18,11 @@ router.get(
     asyncHandler(products.getproduct)
 )
 router.get(
+    '/getProductByName',
+    authentication(),
+    asyncHandler(products.getproductbyName)
+)
+router.get(
     '/getallproduct',
     authentication(),
     asyncHandler(products.getallproduct)
