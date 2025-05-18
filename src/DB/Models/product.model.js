@@ -35,11 +35,12 @@ const productSchema=new Schema(
         },
     },
     category:{
-        type:Types.ObjectId,
-        //ref:"Category",
+        type:String,
+        ref:"Category",
     },
     createdBy:{
-    //  ref:"User",
+      type:Types.ObjectId,
+       ref:"User",
     },
   },
   {timestamps:true}

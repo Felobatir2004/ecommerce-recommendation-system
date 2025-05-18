@@ -34,7 +34,6 @@ export const addproduct = async (req, res, next) => {
         folder: `product/${customId}/${name}`,
     })
 
-    // 4. Create category
     const product = await Product.create({
         name,
         price,
@@ -43,6 +42,7 @@ export const addproduct = async (req, res, next) => {
             secure_url,
             public_id
         },
+        category:category
 
     });
 
