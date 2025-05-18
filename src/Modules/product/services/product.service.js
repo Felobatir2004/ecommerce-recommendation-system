@@ -8,8 +8,8 @@ import { roleType } from "../../../DB/Models/user.model.js";
 import * as dbService from "../../../DB/dbService.js"
 
 export const addproduct = async (req, res, next) => {
-    const { name , price , stock } = req.body;
-    const { categoryId } = req.params
+    const { name , price , stock , categoryName} = req.body;
+    
     const user = await dbService.findOne({
         model: UserModel,
         filter: { _id: req.user._id },
@@ -42,12 +42,10 @@ export const addproduct = async (req, res, next) => {
             secure_url,
             public_id
         },
-        category:categoryId,
+        category:categoryName,
         createdBy: req.user._id,
 
-    });
-    console.log(product);
-    
+    });    
 
     res.status(201).json({ message: "Product created successfully" , product });
 }

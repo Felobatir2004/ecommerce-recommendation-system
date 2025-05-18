@@ -35,7 +35,7 @@ const productSchema=new Schema(
         },
     },
     category:{
-        type:Types.ObjectId,
+        type:String,
         ref:"Category",
     },
     createdBy:{
