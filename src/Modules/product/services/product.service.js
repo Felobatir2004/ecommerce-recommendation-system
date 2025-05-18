@@ -34,7 +34,7 @@ export const addproduct = async (req, res, next) => {
     const {secure_url , public_id} = await cloudinary.uploader.upload(req.file.path,{
         folder: `product/${customId}/${name}`,
     })
-    checkCategory= await dbService.findOne({
+    const checkCategory= await dbService.findOne({
         model: categorymodel,
         filter: { name: categoryName },
     })
