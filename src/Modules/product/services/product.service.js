@@ -9,11 +9,11 @@ import * as dbService from "../../../DB/dbService.js"
 
 export const addproduct = async (req, res, next) => {
     const { name , price , stock } = req.body;
-    const { category } = req.params
+    const { categoryId } = req.params
     const user = await dbService.findOne({
         model: UserModel,
         filter: { _id: req.user._id },
-    });
+    });  
 
     if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -42,9 +42,12 @@ export const addproduct = async (req, res, next) => {
             secure_url,
             public_id
         },
-        category:category
+        category:categoryId,
+        createdBy: req.user._id,
 
     });
+    console.log(product);
+    
 
     res.status(201).json({ message: "Product created successfully" , product });
 }
