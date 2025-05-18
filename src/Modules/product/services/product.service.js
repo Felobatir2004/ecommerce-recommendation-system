@@ -6,6 +6,7 @@ import {Product} from "../../../DB/Models/product.model.js"
 import { UserModel } from "../../../DB/Models/user.model.js";
 import { roleType } from "../../../DB/Models/user.model.js";
 import * as dbService from "../../../DB/dbService.js"
+import categorymodel from "../../../DB/Models/category.model.js";
 
 export const addproduct = async (req, res, next) => {
     const { name , price , stock , categoryName} = req.body;
@@ -33,6 +34,11 @@ export const addproduct = async (req, res, next) => {
     const {secure_url , public_id} = await cloudinary.uploader.upload(req.file.path,{
         folder: `product/${customId}/${name}`,
     })
+    checkCategory= await dbService.findOne({
+        model: categorymodel,
+        filter: { name: categoryName },
+    })
+    if(!checkCategory) return next(new Error("Category not found",{cause: 404}))
 
     const product = await Product.create({
         name,
