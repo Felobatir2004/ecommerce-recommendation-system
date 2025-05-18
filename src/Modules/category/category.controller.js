@@ -12,10 +12,16 @@ router.post(
     asyncHandler(categorys.addcategory)
 )
 router.get(
-    '/getcategory/:id',
+    '/getCategoryById/:id',
     authentication(),
     asyncHandler(categorys.getcategory)
 )
+router.get(
+    '/getCategorybyName',
+    authentication(),
+    asyncHandler(categorys.getCategorybyName)
+)
+
 router.get(
     '/getallcategory',
     authentication(),
