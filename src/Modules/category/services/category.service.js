@@ -48,7 +48,7 @@ export const addcategory = async (req, res, next) => {
             }
         });
 }
-export const getcategory=async(req,res,next)=>{
+export const getcategoryById=async(req,res,next)=>{
    const category =await categorymodel.findById(req.params.id)
    if(!category){
        return res.status(404).json({message:"category not found"});

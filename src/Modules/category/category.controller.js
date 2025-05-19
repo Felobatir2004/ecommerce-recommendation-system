@@ -14,7 +14,7 @@ router.post(
 router.get(
     '/getCategoryById/:id',
     authentication(),
-    asyncHandler(categorys.getcategory)
+    asyncHandler(categorys.getcategoryById)
 )
 router.get(
     '/getCategorybyName',
