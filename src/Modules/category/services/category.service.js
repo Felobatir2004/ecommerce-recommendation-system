@@ -52,8 +52,17 @@ export const getcategory=async(req,res,next)=>{
    let categorys =await categorymodel.findById(req.params.id)
    res.json({message:"Category gets success",categorys});
 }                                          
+/*
 export const getallcategory=async(req,res,next)=>{
    let category=await categorymodel.find()   
+   res.json({message:"Categorys gets success",category});
+}
+   */
+export const getallcategory=async(req,res,next)=>{
+    const page =req.query.page *1||1;
+    const limit=req.query.limit1||20;
+    const skip=(page-1)*limit;
+   let category=await categorymodel.find().skip(skip).limit(limit)
    res.json({message:"Categorys gets success",category});
 }
 export const updatecategory=async(req,res,next)=>{
