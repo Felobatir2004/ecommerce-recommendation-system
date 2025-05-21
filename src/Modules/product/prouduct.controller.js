@@ -6,16 +6,26 @@ import { asyncHandler } from "../../utils/error handling/asyncHandler.js";
 
 const router=Router()
 router.post(
-    '/addproduct/:categoryName',
+    '/addproduct',
     authentication(),
     allowTo('Admin'),
     uploadCloud().single('image'),
     asyncHandler(products.addproduct)
 )
 router.get(
-    '/getproduct/:id',
+    '/getproductById/:id',
     authentication(),
-    asyncHandler(products.getproduct)
+    asyncHandler(products.getproductById)
+)
+router.get(
+    '/getProductByName',
+    authentication(),
+    asyncHandler(products.getproductbyName)
+)
+router.get(
+    '/getProductsByCategory',
+    authentication(),
+    asyncHandler(products.getproductsbycategory)
 )
 router.get(
     '/getallproduct',

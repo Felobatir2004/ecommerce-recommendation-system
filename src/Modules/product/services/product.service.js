@@ -6,14 +6,15 @@ import {Product} from "../../../DB/Models/product.model.js"
 import { UserModel } from "../../../DB/Models/user.model.js";
 import { roleType } from "../../../DB/Models/user.model.js";
 import * as dbService from "../../../DB/dbService.js"
+import categorymodel from "../../../DB/Models/category.model.js";
 
 export const addproduct = async (req, res, next) => {
-    const { name , price , stock } = req.body;
-    const { category } = req.params
+    const { name , price , stock , categoryName} = req.body;
+    
     const user = await dbService.findOne({
         model: UserModel,
         filter: { _id: req.user._id },
-    });
+    });  
 
     if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -33,8 +34,12 @@ export const addproduct = async (req, res, next) => {
     const {secure_url , public_id} = await cloudinary.uploader.upload(req.file.path,{
         folder: `product/${customId}/${name}`,
     })
+    const checkCategory= await dbService.findOne({
+        model: categorymodel,
+        filter: { name: categoryName },
+    })
+    if(!checkCategory) return next(new Error("Category not found",{cause: 404}))
 
-    // 4. Create category
     const product = await Product.create({
         name,
         price,
@@ -43,22 +48,53 @@ export const addproduct = async (req, res, next) => {
             secure_url,
             public_id
         },
+        category:categoryName,
+        createdBy: req.user._id,
 
-    });
+    });    
 
     res.status(201).json({ message: "Product created successfully" , product });
 }
-export const getproduct=async(req,res,next)=>{
-    let product =await Product.findById(req.params.id)
-    res.json({message:"product gets successfly",product})
+export const getproductById=async(req,res,next)=>{
+    const product =await Product.findById(req.params.id)
     if(!product)
     {
         res.status(404).json({message:"product not found"})
     }
+    res.json({message:"product gets successfly",product})
+}
+export const getproductbyName=async(req,res,next)=>{
+    const {name}=req.body
+    let product =await dbService.findOne({model:Product,filter:{name:name}})
+    if(!product)
+    {
+        res.status(404).json({message:"product not found"})
+    }
+    res.json({message:"product gets successfly",product})
+}
+export const getproductsbycategory=async(req,res,next)=>{
+    const {category}=req.body
+
+    const checkCategory= await dbService.findOne({
+        model: categorymodel,
+        filter: { name: category },
+    })
+    if(!checkCategory) return next(new Error("Category not found",{cause: 404}))
+
+    const products =await dbService.find({model:Product,filter:{category:category}})
+    if(!products)
+    {
+        res.status(404).json({message:"product not found"})
+    }
+    res.json({message:"product gets successfly",products})
 }
 /*
 export const getallproduct=async(req,res,next)=>{
-    let products =await Product.find()
+    const products =await Product.find()
+    if(!products)
+    {
+        res.status(404).json({message:"product not found"})
+    }
     res.json({message:"product gets successfly",products})
 }*/
 export const getallproduct=async(req,res,next)=>{
