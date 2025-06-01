@@ -52,6 +52,15 @@ import mongoose, { Schema, model } from "mongoose";
 
 const productSchema = new Schema(
   {
+    brand: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    imageURLs: {
+      type: [String], // مصفوفة صور
+      required: true,
+    },
     name: {
       type: String,
       required: true,
@@ -62,21 +71,13 @@ const productSchema = new Schema(
       required: true,
       min: 0,
     },
-    rating: {
+    rate: {
       type: Number,
       min: 0,
       max: 10,
       default: 0,
     },
-    Images: [
-      {
-        secure_url: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
-    category: {
+    categories: {
       type: String,
       required: true,
       trim: true,
