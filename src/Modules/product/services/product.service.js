@@ -87,7 +87,7 @@ export const getproductsbycategory = async (req, res, next) => {
     const products = await dbService.find({
         model: Product,
         filter: { categories: category },
-        options: { limit: 40 }  // أضف limit هنا
+        options: { limit: 10 }  // أضف limit هنا
     });
 
     if (!products || products.length === 0) {
