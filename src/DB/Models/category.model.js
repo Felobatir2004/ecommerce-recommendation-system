@@ -11,6 +11,7 @@ const categorySchema=new Schema(
     type: Types.ObjectId,
      ref:"user",
     },
+    /*
     Images:{
       secure_url:{
         type: String,
@@ -20,7 +21,8 @@ const categorySchema=new Schema(
         type:String,
        required:true,
       },
-    },
+    },*/
+    
   },
   {timestamps:true}
 );

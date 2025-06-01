@@ -19,12 +19,13 @@ export const addcategory = async (req, res, next) => {
                return res.status(401).json({ message: "You are not authorized to add product" });
            }
 
-        if (!req.file) {
+       /* if (!req.file) {
             return res.status(400).json({ 
                 success: false, 
                 message: "Please upload an image file (JPEG, JPG, PNG)" 
             });
         }
+            */
 
         const {secure_url , public_id} = await cloudinary.uploader.upload(req.file.path,{
         folder: `categories/${name}`,
@@ -34,10 +35,10 @@ export const addcategory = async (req, res, next) => {
         const category = await categorymodel.create({
             name,
             createdBy: req.user._id,
-            Images: {
+            /*Images: {
                 secure_url: secure_url,
                 public_id: public_id
-            }
+            }*/
         });
 
         return res.status(201).json({ 
