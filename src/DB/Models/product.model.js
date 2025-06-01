@@ -57,10 +57,15 @@ const productSchema = new Schema(
       required: true,
       trim: true,
     },
-    imageURLs: {
-      type: [String], // مصفوفة صور
+Images: [
+  {
+    secure_url: {
+      type: String,
       required: true,
     },
+  },
+],
+
     name: {
       type: String,
       required: true,
