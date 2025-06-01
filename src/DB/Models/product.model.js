@@ -1,3 +1,4 @@
+/*
 import { Types } from "mongoose";
 import mongoose,{model, Schema} from "mongoose";
 //const{Schema,model}=mongoose;
@@ -46,3 +47,42 @@ const productSchema=new Schema(
   {timestamps:true}
 );
 export const Product=mongoose.models.Product||model("Product",productSchema);
+*/
+import mongoose, { Schema, model } from "mongoose";
+
+const productSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    rating: {
+      type: Number,
+      min: 0,
+      max: 10,
+      default: 0,
+    },
+    Images: [
+      {
+        secure_url: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
+
+export const Product = mongoose.models.Product || model("Product", productSchema);
