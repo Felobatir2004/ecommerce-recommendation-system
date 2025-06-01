@@ -85,7 +85,7 @@ export const getproductsbycategory = async (req, res, next) => {
     }
 
     // استخدام Product.find مباشرة مع limit
-    const products = await Product.find({ categories: category }).limit(40);
+    const products = await Product.find({ categories: category }).limit(10);
 
     if (!products || products.length === 0) {
         return res.status(404).json({ message: "product not found" });
