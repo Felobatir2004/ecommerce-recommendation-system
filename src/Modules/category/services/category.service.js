@@ -26,10 +26,11 @@ export const addcategory = async (req, res, next) => {
             });
         }
             */
-
+/*
         const {secure_url , public_id} = await cloudinary.uploader.upload(req.file.path,{
         folder: `categories/${name}`,
         })
+        */
 
         // 4. Create category
         const category = await categorymodel.create({
