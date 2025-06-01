@@ -72,22 +72,31 @@ export const getproductbyName=async(req,res,next)=>{
     }
     res.json({message:"product gets successfly",product})
 }
-export const getproductsbycategory=async(req,res,next)=>{
-    const {category}=req.body
+export const getproductsbycategory = async (req, res, next) => {
+    const { category } = req.body;
 
-    const checkCategory= await dbService.findOne({
+    const checkCategory = await dbService.findOne({
         model: categorymodel,
         filter: { name: category },
-    })
-    if(!checkCategory) return next(new Error("Category not found",{cause: 404}))
+    });
 
-    const products =await dbService.find({model:Product,filter:{categories:category}})
-    if(!products)
-    {
-        res.status(404).json({message:"product not found"})
+    if (!checkCategory) {
+        return next(new Error("Category not found", { cause: 404 }));
     }
-    res.json({message:"product gets successfly",products})
-}
+
+    const products = await dbService.find({
+        model: Product,
+        filter: { categories: category },
+        options: { limit: 40 }  // أضف limit هنا
+    });
+
+    if (!products || products.length === 0) {
+        return res.status(404).json({ message: "product not found" });
+    }
+
+    res.json({ message: "product gets successfly", products });
+};
+
 /*
 export const getallproduct=async(req,res,next)=>{
     const products =await Product.find()
