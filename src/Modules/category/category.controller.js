@@ -8,7 +8,6 @@ router.post(
     '/addcategory',
     authentication(),
     allowTo('Admin'),
-    uploadCloud().single('image'),
     asyncHandler(categorys.addcategory)
 )
 router.get(
