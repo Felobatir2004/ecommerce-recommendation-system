@@ -84,11 +84,8 @@ export const getproductsbycategory = async (req, res, next) => {
         return next(new Error("Category not found", { cause: 404 }));
     }
 
-    const products = await dbService.find({
-        model: Product,
-        filter: { categories: category },
-        options: { limit: 10 }  // أضف limit هنا
-    });
+    // استخدام Product.find مباشرة مع limit
+    const products = await Product.find({ categories: category }).limit(40);
 
     if (!products || products.length === 0) {
         return res.status(404).json({ message: "product not found" });
@@ -96,6 +93,7 @@ export const getproductsbycategory = async (req, res, next) => {
 
     res.json({ message: "product gets successfly", products });
 };
+
 
 /*
 export const getallproduct=async(req,res,next)=>{
