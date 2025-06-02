@@ -102,6 +102,13 @@ export const getallproduct=async(req,res,next)=>{
     {
         res.status(404).json({message:"product not found"})
     }
+        products = products.map(product => {
+      const productObj = product.toObject();
+      if (typeof productObj.imageURLs === 'string') {
+        productObj.imageURLs = productObj.imageURLs.split(',').map(url => url.trim());
+      }
+      return productObj;
+    });
     res.json({message:"product gets successfly",products})
 }
 /*
