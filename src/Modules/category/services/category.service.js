@@ -62,6 +62,15 @@ export const getcategoryById=async(req,res,next)=>{
     }
     res.json({message:"Category gets success",category});
 }
+
+export const getCategorybyName=async(req,res,next)=>{
+    const {name} = req.body
+    let category=await categorymodel.findOne({name:name})
+    if(!category){
+        return res.status(404).json({message:"category not found"});
+    }
+    res.json({message:"Category gets success",category});
+}
 /*
 export const getallcategory=async(req,res,next)=>{
    let category=await categorymodel.find()   
