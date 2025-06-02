@@ -24,7 +24,6 @@ router.get(
 )
 router.get(
     '/getProductsByCategory',
-    authentication(),
     asyncHandler(products.getproductsbycategory)
 )
 router.get(
