@@ -53,7 +53,15 @@ export const addcategory = async (req, res, next) => {
 export const getcategory=async(req,res,next)=>{
    let categorys =await categorymodel.findById(req.params.id)
    res.json({message:"Category gets success",categorys});
-}                                          
+}    
+
+export const getcategoryById=async(req,res,next)=>{
+    let category=await categorymodel.findById(req.params.id)
+    if(!category){
+        return res.status(404).json({message:"category not found"});
+    }
+    res.json({message:"Category gets success",category});
+}
 /*
 export const getallcategory=async(req,res,next)=>{
    let category=await categorymodel.find()   
