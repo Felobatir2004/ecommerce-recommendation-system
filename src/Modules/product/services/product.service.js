@@ -95,15 +95,16 @@ export const getproductsbycategory = async (req, res, next) => {
 };
 
 
-/*
+
 export const getallproduct=async(req,res,next)=>{
-    const products =await Product.find()
+    const products =await Product.find().limit(50)
     if(!products)
     {
         res.status(404).json({message:"product not found"})
     }
     res.json({message:"product gets successfly",products})
-}*/
+}
+/*
 export const getallproduct=async(req,res,next)=>{
     const page =req.query.page *1||1;
     const limit=req.query.limit1||20;
@@ -111,6 +112,7 @@ export const getallproduct=async(req,res,next)=>{
     let products =await Product.find().skip(skip).limit(limit)
     res.json({message:"product gets successfly",products})
 }
+    */
 export const deleteproduct=async(req,res,next)=>{
     let product=await Product.findByIdAndDelete(req.params.id)
     if(!product)
