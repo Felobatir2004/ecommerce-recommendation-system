@@ -73,7 +73,7 @@ export const getCategorybyName=async(req,res,next)=>{
 }
 
 export const getallcategory=async(req,res,next)=>{
-   let category=await categorymodel.find().limit(5) 
+   let category=await categorymodel.find().limit(7) 
    res.json({message:"Categorys gets success",category});
 }
 /*
