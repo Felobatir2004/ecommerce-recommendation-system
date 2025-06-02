@@ -29,7 +29,7 @@ router.get(
 )
 router.get(
     '/getallproduct',
-    authentication(),
+    //authentication(),
     asyncHandler(products.getallproduct)
 )
 router.delete(
