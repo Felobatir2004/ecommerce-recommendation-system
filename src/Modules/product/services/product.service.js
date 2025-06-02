@@ -97,7 +97,7 @@ export const getproductsbycategory = async (req, res, next) => {
 
 
 export const getallproduct=async(req,res,next)=>{
-    const products =await Product.find().limit(5)
+    let products =await Product.find().limit(5)
     if(!products)
     {
         res.status(404).json({message:"product not found"})
