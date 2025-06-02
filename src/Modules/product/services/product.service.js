@@ -73,26 +73,36 @@ export const getproductbyName=async(req,res,next)=>{
     res.json({message:"product gets successfly",product})
 }
 export const getproductsbycategory = async (req, res, next) => {
-    const { category } = req.body;
+        const { category } = req.body;
 
-    const checkCategory = await dbService.findOne({
-        model: categorymodel,
-        filter: { name: category },
-    });
+        const checkCategory = await dbService.findOne({
+            model: categorymodel,
+            filter: { name: category },
+        });
 
-    if (!checkCategory) {
-        return next(new Error("Category not found", { cause: 404 }));
+        if (!checkCategory) {
+            return next(new Error("Category not found", { cause: 404 }));
+        }
+
+        let products = await Product.find({ categories: category }).limit(50);
+
+        if (!products || products.length === 0) {
+            return res.status(404).json({ message: "product not found" });
+        }
+
+        // تعديل imageURLs لو كانت String
+        products = products.map(product => {
+            const productObj = product.toObject();
+            if (typeof productObj.imageURLs === 'string') {
+                productObj.imageURLs = productObj.imageURLs.split(',').map(url => url.trim());
+            }
+            return productObj;
+        });
+
+        return res.json({ message: "Products retrieved successfully", products });
+    
     }
 
-    // استخدام Product.find مباشرة مع limit
-    const products = await Product.find({ categories: category }).limit(50);
-
-    if (!products || products.length === 0) {
-        return res.status(404).json({ message: "product not found" });
-    }
-
-    res.json({ message: "product gets successfly", products });
-};
 
 
 
