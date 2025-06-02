@@ -71,12 +71,12 @@ export const getCategorybyName=async(req,res,next)=>{
     }
     res.json({message:"Category gets success",category});
 }
-/*
+
 export const getallcategory=async(req,res,next)=>{
-   let category=await categorymodel.find()   
+   let category=await categorymodel.find().limit(5) 
    res.json({message:"Categorys gets success",category});
 }
-   */
+/*
 export const getallcategory=async(req,res,next)=>{
     const page =req.query.page *1||1;
     const limit=req.query.limit1||20;
@@ -84,6 +84,7 @@ export const getallcategory=async(req,res,next)=>{
    let category=await categorymodel.find().skip(skip).limit(limit)
    res.json({message:"Categorys gets success",category});
 }
+   */
 export const updatecategory=async(req,res,next)=>{
     let category=await categorymodel.findByIdAndUpdate(req.params.id,req.body,{new:true})
     if(!category){
