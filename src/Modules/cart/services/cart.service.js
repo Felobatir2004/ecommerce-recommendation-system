@@ -44,7 +44,7 @@
   
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Server Error", details: err.messag});
+      res.status(500).json({ error: "Server Error", details: err.message});
     }
   };
   export const getUserCart = async (req, res) => {
