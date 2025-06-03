@@ -8,7 +8,7 @@ let withlist= await UserModel.findByIdAndUpdate(req.user._id,
             res.json({message:"withlist not found"})
         }
         res.json({message:"withlist",withlist})
-    }
+}
 
     export const removefromwithlist=async(req,res,next)=>{
         let withlist= await UserModel.findByIdAndUpdate(req.user._id,
