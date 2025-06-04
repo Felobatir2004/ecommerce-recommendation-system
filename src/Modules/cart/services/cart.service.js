@@ -105,15 +105,13 @@
 
 export const getSimilarProductsFromCart = async (req, res) => {
   try {
-    const { userId } = req.user._id;
+    const userId = req.user._id;  // ✅ التصحيح هنا
 
-    // Step 1: Get user's cart
     const cart = await cartModel.findOne({ user: userId }).populate('cartItems.product');
     if (!cart) {
       return res.status(404).json({ success: false, message: "Cart not found" });
     }
 
-    // Step 2: Extract brands from cart items
     const cartProductIds = [];
     const brands = new Set();
 
@@ -128,7 +126,6 @@ export const getSimilarProductsFromCart = async (req, res) => {
       return res.status(200).json({ success: true, similarProducts: [] });
     }
 
-    // Step 3: Find other products with the same brands but not already in the cart
     const similarProducts = await Product.find({
       brand: { $in: Array.from(brands) },
       _id: { $nin: cartProductIds }
