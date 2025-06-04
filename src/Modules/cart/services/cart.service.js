@@ -106,7 +106,8 @@
 export const getSimilarProductsFromCart = async (req, res) => {
   try {
     const userId = req.user._id;  // ✅ التصحيح هنا
-
+    console.log("User ID from req.user:", userId);
+    
     const cart = await cartModel.findOne({ user: userId }).populate('cartItems.product');
     if (!cart) {
       return res.status(404).json({ success: false, message: "Cart not found" });
