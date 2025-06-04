@@ -107,21 +107,23 @@ import { UserModel } from "../../../DB/Models/user.model.js";
 
 export const getSimilarProductsFromCart = async (req, res) => {
   try {
-    const userId = req.user._id;  // ✅ التصحيح هنا
-    console.log("User ID from req.user:", userId);
+    const userId = req.user._id;
 
-    const cart = await cartModel.findOne({ user: userId }).populate('cartItems.product');
-    if (!cart) {
-      return res.status(404).json({ success: false, message: "Cart not found" });
+    // Step 1: Get user and populate cart items
+    const user = await UserModel.findById(userId).populate("cart");
+
+    if (!user || !user.cart || user.cart.length === 0) {
+      return res.status(404).json({ success: false, message: "No products in cart" });
     }
 
+    // Step 2: Extract productIds and brands from cart
     const cartProductIds = [];
     const brands = new Set();
 
-    for (const item of cart.cartItems) {
-      if (item.product) {
-        cartProductIds.push(item.product._id);
-        brands.add(item.product.brand);
+    for (const product of user.cart) {
+      if (product) {
+        cartProductIds.push(product._id);
+        brands.add(product.brand);
       }
     }
 
@@ -129,6 +131,7 @@ export const getSimilarProductsFromCart = async (req, res) => {
       return res.status(200).json({ success: true, similarProducts: [] });
     }
 
+    // Step 3: Find similar products by brand
     const similarProducts = await Product.find({
       brand: { $in: Array.from(brands) },
       _id: { $nin: cartProductIds }
@@ -144,3 +147,4 @@ export const getSimilarProductsFromCart = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
