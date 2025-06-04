@@ -65,7 +65,7 @@ export const getLoginUserData = async (req, res, next) => {
 };
 
 export const geyAllUsers = async (req, res, next) => {
-    const users = await dbService.findAll({ model: UserModel });
+    const users = await dbService.find({ model: UserModel });
     return res.status(200).json({ success: true, data: { users } });
 };
 
