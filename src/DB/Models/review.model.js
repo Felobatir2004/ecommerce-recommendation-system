@@ -17,6 +17,10 @@
     type:Types.ObjectId,
      ref:"product",
      // required:true
+    },
+    review:{
+      type:String,
+      required:true
     }
   })
   export const review =mongoose.models.review ||model("review",reviewschema)

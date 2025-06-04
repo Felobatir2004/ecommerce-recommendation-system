@@ -11,8 +11,12 @@ export const addcoupon=async(req,res,next)=>{
     }
 }
 export const getalldiscoutcoupon=async(req,res,next)=>{
-    let coupons=await coupon.find()
-    res.json({message:"this is all discount coupon",coupons})
+    try{
+        const coupons=await coupon.find()
+        res.json({message:"this is all discount coupon",coupons})
+    }catch(error){
+        res.status(500).json({message:"Internal Server Error"})
+    }
 }
 export const getsinglediscountcoupon=async(req,res,next)=>{
     let onecoupon=await coupon.findById(req.params.id)
