@@ -18,6 +18,10 @@ router.get(
     authentication(),
     asyncHandler(userService.getLoginUserData)
 )
+router.get(
+    "/getAllUsers",
+    asyncHandler(userService.getAllUsers)
+)
 
 router.get(
     "/:userId",

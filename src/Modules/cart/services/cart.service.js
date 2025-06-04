@@ -102,9 +102,6 @@ import { UserModel } from "../../../DB/Models/user.model.js";
     }
   };
 
-
-  // GET /cart/similar-products/:userId
-
 export const getSimilarProductsFromCart = async (req, res) => {
   try {
     const userId = req.user._id;

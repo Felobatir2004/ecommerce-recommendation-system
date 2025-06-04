@@ -64,6 +64,11 @@ export const getLoginUserData = async (req, res, next) => {
   });
 };
 
+export const geyAllUsers = async (req, res, next) => {
+    const users = await dbService.findAll({ model: UserModel });
+    return res.status(200).json({ success: true, data: { users } });
+};
+
 export const updatePassword = async (req,res,next) =>{
     const {oldPassword , password} =req.body;
 
