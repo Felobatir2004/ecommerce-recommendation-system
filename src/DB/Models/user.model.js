@@ -70,7 +70,8 @@ const userSchema = new Schema({
 
     },
   ],
-withlist:[{type:Types.ObjectId,ref:'Product'}]
+withlist:[{type:Types.ObjectId,ref:'Product'}],
+cart:[{type:Types.ObjectId,ref:'Product'}]
 
    
 },{timestamps:true})

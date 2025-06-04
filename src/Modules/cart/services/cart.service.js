@@ -1,5 +1,6 @@
  import { cartModel } from "../../../DB/Models/cart.model.js";
  import {Product} from "../../../DB/Models/product.model.js"
+import { UserModel } from "../../../DB/Models/user.model.js";
  export const addProductToCart = async (req, res) => {
     try {
       const userId = req.user._id;
@@ -13,9 +14,10 @@
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
+      let user = await UserModel.findByIdAndUpdate(req.user._id,{$addToSet:{cart:productId}},{new:true})  
       const productPrice = product.price;
       let cart = await cartModel.findOne({ user: userId });
-  
+      
       if (!cart) {
         cart = await cartModel.create({
           user: userId,
@@ -107,7 +109,7 @@ export const getSimilarProductsFromCart = async (req, res) => {
   try {
     const userId = req.user._id;  // ✅ التصحيح هنا
     console.log("User ID from req.user:", userId);
-    
+
     const cart = await cartModel.findOne({ user: userId }).populate('cartItems.product');
     if (!cart) {
       return res.status(404).json({ success: false, message: "Cart not found" });
