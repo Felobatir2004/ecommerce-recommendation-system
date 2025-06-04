@@ -1,5 +1,4 @@
-
-export const template = (code , name,subject) => `<!DOCTYPE html>
+export const template = (code, name, subject) => `<!DOCTYPE html>
 <html>
 <head>
     <style>
@@ -65,17 +64,16 @@ export const template = (code , name,subject) => `<!DOCTYPE html>
         </div>
         <div class="email-body">
             <h2>Hello, ${name}</h2>
-            <p>Thank you for signing up with [Your Company Name]. To complete your registration and start using your account, please click the button below:</p>
+            <p>Thank you for signing up with <strong>Shopop</strong>. To complete your registration and start using your account, please use the code below:</p>
             <h2 class="activation-button">${code}</h2>
             <p>If you did not sign up for this account, please ignore this email.</p>
-            <p>Best regards,<br>[Your Team/Company Name]</p>
+            <p>Best regards,<br>The <strong>Shopop</strong> Team</p>
         </div>
         <div class="email-footer">
-            <p>&copy; 2025 [Your Company Name]. All rights reserved.</p>
-            <p><a href="[SupportLink]">Contact Support</a> | <a href="[UnsubscribeLink]">Unsubscribe</a></p>
+            <p>&copy; 2025 Shopop. All rights reserved.</p>
+            <p><a href="https://shopop.com/support">Contact Support</a> | <a href="https://shopop.com/unsubscribe">Unsubscribe</a></p>
         </div>
     </div>
 </body>
 </html>
-
-`
+`;
