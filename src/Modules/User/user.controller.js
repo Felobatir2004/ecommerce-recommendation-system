@@ -20,7 +20,7 @@ router.get(
 )
 router.get(
     "/getAllUsers",
-    asyncHandler(userService.getAllUsers)
+    asyncHandler(userService.geyAllUsers)
 )
 
 router.get(
