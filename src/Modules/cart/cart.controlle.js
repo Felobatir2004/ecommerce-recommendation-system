@@ -6,4 +6,5 @@ router.post('/addtocart',authentication(),cart.addProductToCart)
 router.delete('/deletefromcart/:id',authentication(),cart.removeProductFromCart)
 router.delete('/deleteAllinCart',authentication(),cart.clearUserCart)
 router.get('/getusercart',authentication(),cart.getUserCart)
+router.get('/getallsimilarproducts',authentication(),cart.getSimilarProductsFromCart)
 export default router

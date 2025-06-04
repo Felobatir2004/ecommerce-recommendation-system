@@ -99,3 +99,48 @@
       res.status(500).json({ error: "Server error" });
     }
   };
+
+
+  // GET /cart/similar-products/:userId
+
+export const getSimilarProductsFromCart = async (req, res) => {
+  try {
+    const { userId } = req.user._id;
+
+    // Step 1: Get user's cart
+    const cart = await cartModel.findOne({ user: userId }).populate('cartItems.product');
+    if (!cart) {
+      return res.status(404).json({ success: false, message: "Cart not found" });
+    }
+
+    // Step 2: Extract brands from cart items
+    const cartProductIds = [];
+    const brands = new Set();
+
+    for (const item of cart.cartItems) {
+      if (item.product) {
+        cartProductIds.push(item.product._id);
+        brands.add(item.product.brand);
+      }
+    }
+
+    if (brands.size === 0) {
+      return res.status(200).json({ success: true, similarProducts: [] });
+    }
+
+    // Step 3: Find other products with the same brands but not already in the cart
+    const similarProducts = await Product.find({
+      brand: { $in: Array.from(brands) },
+      _id: { $nin: cartProductIds }
+    });
+
+    return res.status(200).json({
+      success: true,
+      similarProducts
+    });
+
+  } catch (error) {
+    console.error("Error fetching similar products:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
