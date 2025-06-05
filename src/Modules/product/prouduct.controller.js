@@ -14,7 +14,7 @@ router.post(
 )
 router.get(
     '/getproductById/:id',
-    authentication(),
+    //authentication(),
     asyncHandler(products.getproductById)
 )
 router.get(
@@ -33,8 +33,8 @@ router.get(
 )
 router.delete(
     '/deleteproduct',
-    //allowTo('Admin'),
-    //authentication(),
+    allowTo('Admin'),
+    authentication(),
     asyncHandler(products.deleteproduct)
 )
 router.put(
