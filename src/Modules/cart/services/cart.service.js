@@ -27,7 +27,7 @@ import { UserModel } from "../../../DB/Models/user.model.js";
             price: productPrice
           }],
           totalCartPrice: productPrice * quantity,
-          productQuintity: quantity
+          productQuintity: quantity 
         
         });
         return res.status(201).json({ message: "Cart created and product added", cart });
@@ -152,4 +152,10 @@ export const checkout = async (req, res) => {
     const updateCart = await cartModel.findOneAndUpdate({ user: userId }, { $set: { cartItems: [] } }, { new: true });
     res.status(200).json({ cart });
 
+<<<<<<< HEAD
 }
+=======
+}
+
+
+>>>>>>> 678a55a86bbe46864a40873727e9912802884690
