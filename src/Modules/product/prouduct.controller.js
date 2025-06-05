@@ -32,7 +32,7 @@ router.get(
     asyncHandler(products.getallproduct)
 )
 router.delete(
-    '/deleteproduct/:id',
+    '/deleteproduct',
     //allowTo('Admin'),
     //authentication(),
     asyncHandler(products.deleteproduct)
