@@ -19,7 +19,7 @@ router.get(
 )
 router.get(
     '/getProductByName',
-    authentication(),
+    //authentication(),
     asyncHandler(products.getproductbyName)
 )
 router.get(
