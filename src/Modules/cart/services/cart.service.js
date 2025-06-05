@@ -27,7 +27,7 @@ import { UserModel } from "../../../DB/Models/user.model.js";
             price: productPrice
           }],
           totalCartPrice: productPrice * quantity,
-          productQuintity: quantity
+          productQuintity: quantity 
         
         });
         return res.status(201).json({ message: "Cart created and product added", cart });
@@ -153,4 +153,5 @@ export const checkout = async (req, res) => {
     res.status(200).json({ cart });
 
 }
+
 
