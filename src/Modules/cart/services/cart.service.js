@@ -153,3 +153,4 @@ export const checkout = async (req, res) => {
     res.status(200).json({ cart });
 
 }
+
