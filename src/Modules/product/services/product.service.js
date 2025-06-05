@@ -63,30 +63,30 @@ export const getproductById=async(req,res,next)=>{
     }
     res.json({message:"product gets successfly",product})
 }
-export const getproductbyName = async (req, res, next) => {
+export const getProductsByName = async (req, res, next) => {
     const { name } = req.body;
 
     if (!name || typeof name !== "string") {
       return res.status(400).json({ message: "Invalid or missing product name" });
     }
 
-    const product = await dbService.findOne({
+    const products = await dbService.find({
       model: Product,
       filter: {
         name: { $regex: name, $options: "i" } // بحث جزئي بدون حساسية لحالة الحروف
       }
     });
 
-    if (!product) {
-      return res.status(404).json({ message: "product not found" });
+    if (!products || products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
     }
 
     res.status(200).json({
-      message: "product gets successfully",
-      product
+      message: "Products retrieved successfully",
+      products
     });
-
 };
+
 
 export const getproductsbycategory = async (req, res, next) => {
         const { category } = req.body;
