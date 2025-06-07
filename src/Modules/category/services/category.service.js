@@ -74,7 +74,7 @@ export const getCategorybyName=async(req,res,next)=>{
 
 export const getallcategory = async (req, res, next) => {
   try {
-    const category = await categorymodel.find().limit(7);
+    const category = await categorymodel.find().limit(100);
     res.status(200).json({ message: "Categories retrieved", category });
   } catch (error) {
     res.status(500).json({ message: "Failed to get categories", error });
@@ -103,4 +103,3 @@ if(!category){
 }
     res.json({message:"category deleted succesfly",category})
 }
-
