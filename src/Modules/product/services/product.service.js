@@ -100,7 +100,7 @@ export const getproductsbycategory = async (req, res, next) => {
             return next(new Error("Category not found", { cause: 404 }));
         }
 
-        let products = await Product.find({ categories: category }).limit(51);
+        let products = await Product.find({ categories: category }).limit(100);
 
         if (!products || products.length === 0) {
             return res.status(404).json({ message: "product not found" });
@@ -123,7 +123,7 @@ export const getproductsbycategory = async (req, res, next) => {
 
 
 export const getallproduct=async(req,res,next)=>{
-    let products =await Product.find().limit(51)
+    let products =await Product.find().limit(100)
     if(!products)
     {
         res.status(404).json({message:"product not found"})
