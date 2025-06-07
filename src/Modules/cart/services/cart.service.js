@@ -151,7 +151,4 @@ export const checkout = async (req, res) => {
     if (!cart) return res.status(404).json({ message: "Cart is empty" });
     const updateCart = await cartModel.findOneAndUpdate({ user: userId }, { $set: { cartItems: [] } }, { new: true });
     res.status(200).json({ cart });
-
-}
-
-
+};

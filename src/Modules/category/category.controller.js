@@ -12,7 +12,6 @@ router.post(
 )
 router.get(
     '/getCategoryById/:id',
-    authentication(),
     asyncHandler(categorys.getcategoryById)
 )
 router.get(
@@ -23,17 +22,14 @@ router.get(
 
 router.get(
     '/getallcategory',
-    authentication(),
     asyncHandler(categorys.getallcategory)
 )
 router.put(
     '/updatecategory/:id',
-    authentication(),
     asyncHandler(categorys.updatecategory)
 )
 router.delete(
     '/deletecategory/:id',
-    authentication(),
     asyncHandler(categorys.deletecategory)
 )
 export default router

@@ -63,15 +63,31 @@ export const getproductById=async(req,res,next)=>{
     }
     res.json({message:"product gets successfly",product})
 }
-export const getproductbyName=async(req,res,next)=>{
-    const {name}=req.body
-    let product =await dbService.findOne({model:Product,filter:{name:name}})
-    if(!product)
-    {
-        res.status(404).json({message:"product not found"})
+export const getProductsByName = async (req, res, next) => {
+    const { name } = req.body;
+
+    if (!name || typeof name !== "string") {
+      return res.status(400).json({ message: "Invalid or missing product name" });
     }
-    res.json({message:"product gets successfly",product})
-}
+
+    const products = await dbService.find({
+      model: Product,
+      filter: {
+        name: { $regex: name, $options: "i" } // بحث جزئي بدون حساسية لحالة الحروف
+      }
+    });
+
+    if (!products || products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
+    }
+
+    res.status(200).json({
+      message: "Products retrieved successfully",
+      products
+    });
+};
+
+
 export const getproductsbycategory = async (req, res, next) => {
         const { category } = req.body;
 
@@ -131,7 +147,8 @@ export const getallproduct=async(req,res,next)=>{
 }
     */
 export const deleteproduct=async(req,res,next)=>{
-    let product=await Product.findByIdAndDelete(req.params.id)
+    const {product_id}=req.body
+    let product=await Product.findByIdAndDelete(product_id)
     if(!product)
     {
         res.status(404).json({message:"product not found"})

@@ -14,13 +14,13 @@ router.post(
 )
 router.get(
     '/getproductById/:id',
-    authentication(),
+    //authentication(),
     asyncHandler(products.getproductById)
 )
 router.get(
     '/getProductByName',
-    authentication(),
-    asyncHandler(products.getproductbyName)
+    //authentication(),
+    asyncHandler(products.getProductsByName)
 )
 router.get(
     '/getProductsByCategory',
@@ -32,9 +32,9 @@ router.get(
     asyncHandler(products.getallproduct)
 )
 router.delete(
-    '/deleteproduct/:id',
-    allowTo('Admin'),
-    authentication(),
+    '/deleteproduct',
+    //allowTo('Admin'),
+    //authentication(),
     asyncHandler(products.deleteproduct)
 )
 router.put(
