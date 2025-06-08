@@ -3,7 +3,8 @@ import * as dbService from "../../DB/dbService.js"
 import { emailEmitter, otp } from "../../utils/email/email.event.js"
 import { compareHash, hash } from "../../utils/hashing/hash.js";
 import { generateToken } from "../../utils/token/token.js"
-
+import axios from "axios";
+import jwt from "jsonwebtoken"
 export const register = async  (req,res,next)=>{
     const {userName , email , password ,mobileNumber}= req.body
 
@@ -177,6 +178,7 @@ export const auth0_callback = async (req, res, next) => {
     const { code } = req.query;
     if (!code) return next(new Error("Authorization code is required", { cause: 400 }));
 
+
     const params = new URLSearchParams();
     params.append('grant_type', 'authorization_code');
     params.append('client_id', process.env.AUTH0_CLIENT_ID);
@@ -185,9 +187,8 @@ export const auth0_callback = async (req, res, next) => {
     params.append('redirect_uri', 'https://ecommerce-recommendation-system.vercel.app/auth/auth0/callback');
 
     const tokenRes = await axios.post(`https://${process.env.AUTH0_DOMAIN}/oauth/token`, params, {
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
-
     const { id_token } = tokenRes.data;
     const decoded = jwt.decode(id_token);
     const { sub: auth0Id, email, name } = decoded;
