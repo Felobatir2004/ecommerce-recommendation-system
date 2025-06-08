@@ -41,6 +41,6 @@ router.patch(
     asyncHandler(authService.reset_password)
 )
 
-router.get("/auth0/callback", asyncHandler(authService.auth0_callback));
+router.post("/auth0/callback", asyncHandler(authService.auth0_callback));
 
 export default router
