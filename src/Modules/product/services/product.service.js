@@ -89,11 +89,11 @@ export const getProductsByName = async (req, res, next) => {
 
 
 export const getproductsbycategory = async (req, res, next) => {
-        const { category } = req.params;
+        const { category } = req.body;
 
         const checkCategory = await dbService.findOne({
             model: categorymodel,
-            filter: { id: category },
+            filter: { name: category },
         });
 
         if (!checkCategory) {
