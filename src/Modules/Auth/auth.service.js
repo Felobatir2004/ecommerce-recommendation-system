@@ -113,6 +113,63 @@ export const login = async (req,res,next)=>{
          }
     })
 }
+export const auth0Login = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return next(new Error("Email is required", { cause: 400 }));
+    }
+
+    // 1. شوف إذا فيه يوزر بالإيميل ده
+    let user = await dbService.findOne({ model: UserModel, filter: { email } });
+
+    // 2. لو مفيش يوزر → اعمله تسجيل تلقائي
+    if (!user) {
+      user = await dbService.create({
+        model: UserModel,
+        data: {
+          email,
+          password: "auth0_user", // باسورد وهمي - مش هيستخدمه
+          isVerified: true,        // لأن Auth0 بالفعل موثّق
+          role: roleType.User
+        }
+      });
+    }
+
+    // 3. طلعله التوكنات زي ما في login العادي
+    const access_token = generateToken({
+      payload: { id: user._id },
+      signature: user.role === roleType.User
+        ? process.env.USER_ACCESS_TOKEN
+        : process.env.ADMIN_ACCESS_TOKEN,
+      options: { expiresIn: process.env.ACCESS_TOKEN_EXPIRESS }
+    });
+
+    const refresh_token = generateToken({
+      payload: { id: user._id },
+      signature: user.role === roleType.User
+        ? process.env.USER_ACCESS_TOKEN
+        : process.env.ADMIN_ACCESS_TOKEN,
+      options: { expiresIn: process.env.REFRESH_TOKEN_EXPIRESS }
+    });
+
+    let roleId = user.role === roleType.Admin ? 1 : 2;
+
+    return res.status(200).json({
+      success: true,
+      tokens: {
+        access_token,
+        refresh_token,
+        roleId
+      }
+    });
+
+  } catch (err) {
+    return next(new Error("Server Error", { cause: 500 }));
+  }
+};
+
 
 export const forget_password = async (req,res,next)=>{
 

@@ -22,6 +22,13 @@ router.post(
     validation(authValidation.signInSchema),
     asyncHandler(authService.login)
 )
+
+// routes/auth.routes.js
+router.post(
+  "/auth0-login",
+  asyncHandler(authService.auth0Login)
+)
+
 router.patch(
     "/forget_password",
     validation(authValidation.forgetPasswordSchema),
