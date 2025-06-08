@@ -80,7 +80,6 @@ export const signUp = async (req, res, next) => {
     }
 
     // 2- هش الباسورد
-    const hashedPassword = await hashPassword(password);
 
     // 3- إنشاء المستخدم
     const newUser = await dbService.create({
@@ -88,7 +87,7 @@ export const signUp = async (req, res, next) => {
       data: {
         userName,
         email,
-        password: hashedPassword,
+        password,
         isVerified: false, // افترض إنه لازم يتفعل بالايميل بعدين
       },
     });
