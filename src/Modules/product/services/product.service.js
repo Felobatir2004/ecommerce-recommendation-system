@@ -123,7 +123,7 @@ export const getproductsbycategory = async (req, res, next) => {
 
 
 export const getallproduct=async(req,res,next)=>{
-    let products =await Product.find().limit(51)
+    let products =await Product.find()
     if(!products)
     {
         res.status(404).json({message:"product not found"})
