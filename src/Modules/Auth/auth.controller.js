@@ -5,15 +5,15 @@ import { validation } from "../../middlewares/validation.middleware.js";
 import { asyncHandler } from "../../utils/error handling/asyncHandler.js";
 
 const router = Router()
-
+/*
 router.post(
     "/register",
     validation(authValidation.registerSchema),
     asyncHandler(authService.register)
 )
-
+*/
 router.post(
-    "/sidnUp",
+    "/register",
     asyncHandler(authService.signUp)
 )
 router.patch(
