@@ -173,49 +173,57 @@ export const auth0Login = async (req, res, next) => {
 */
 
 export const auth0_callback = async (req, res, next) => {
-  const { code } = req.query;
-  if (!code) return next(new Error("Authorization code is required", { cause: 400 }));
+  try {
+    const { code } = req.query;
+    if (!code) return next(new Error("Authorization code is required", { cause: 400 }));
 
-  const tokenRes = await axios.post(`https://${process.env.AUTH0_DOMAIN}/oauth/token`, {
-    grant_type: 'authorization_code',
-    client_id: process.env.AUTH0_CLIENT_ID,
-    client_secret: process.env.AUTH0_CLIENT_SECRET,
-    code,
-    redirect_uri: 'https://ecommerce-recommendation-system.vercel.app/auth/auth0/callback',
-  }, { headers: { 'content-type': 'application/x-www-form-urlencoded' } });
+    const params = new URLSearchParams();
+    params.append('grant_type', 'authorization_code');
+    params.append('client_id', process.env.AUTH0_CLIENT_ID);
+    params.append('client_secret', process.env.AUTH0_CLIENT_SECRET);
+    params.append('code', code);
+    params.append('redirect_uri', 'https://ecommerce-recommendation-system.vercel.app/auth/auth0/callback');
 
-  const { id_token } = tokenRes.data;
-  const decoded = jwt.decode(id_token);
-  const { sub: auth0Id, email, name } = decoded;
-
-  if (!email) return next(new Error("Email not found in token", { cause: 400 }));
-
-  let user = await dbService.findOne({ model: UserModel, filter: { auth0Id } });
-
-  if (!user) {
-    user = await dbService.create({
-      model: UserModel,
-      data: { auth0Id, email, name, password: 'auth0_user', isVerified: true, role: roleType.User },
+    const tokenRes = await axios.post(`https://${process.env.AUTH0_DOMAIN}/oauth/token`, params, {
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
     });
-  } else {
-    await dbService.update({ model: UserModel, filter: { auth0Id }, data: { email, name } });
+
+    const { id_token } = tokenRes.data;
+    const decoded = jwt.decode(id_token);
+    const { sub: auth0Id, email, name } = decoded;
+
+    if (!email) return next(new Error("Email not found in token", { cause: 400 }));
+
+    let user = await dbService.findOne({ model: UserModel, filter: { auth0Id } });
+
+    if (!user) {
+      user = await dbService.create({
+        model: UserModel,
+        data: { auth0Id, email, name, password: 'auth0_user', isVerified: true, role: roleType.User },
+      });
+    } else {
+      await dbService.update({ model: UserModel, filter: { auth0Id }, data: { email, name } });
+    }
+
+    const access_token = jwt.sign({ id: user._id }, process.env.USER_ACCESS_TOKEN, {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRES,
+    });
+
+    const refresh_token = jwt.sign({ id: user._id }, process.env.USER_ACCESS_TOKEN, {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRES,
+    });
+
+    const roleId = user.role === roleType.Admin ? 1 : 2;
+
+    return res.status(200).json({
+      success: true,
+      tokens: { access_token, refresh_token, roleId },
+      user: { id: user._id, email, name, auth0Id },
+    });
+  } catch (error) {
+    console.error('Auth0 callback error:', error);
+    return next(new Error('Server Error', { cause: 500 }));
   }
-
-  const access_token = jwt.sign({ id: user._id }, process.env.USER_ACCESS_TOKEN, {
-    expiresIn: process.env.ACCESS_TOKEN_EXPIRES,
-  });
-
-  const refresh_token = jwt.sign({ id: user._id }, process.env.USER_ACCESS_TOKEN, {
-    expiresIn: process.env.REFRESH_TOKEN_EXPIRES,
-  });
-
-  const roleId = user.role === roleType.Admin ? 1 : 2;
-
-  return res.status(200).json({
-    success: true,
-    tokens: { access_token, refresh_token, roleId },
-    user: { id: user._id, email, name, auth0Id },
-  });
 };
 
 
