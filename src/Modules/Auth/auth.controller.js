@@ -12,6 +12,10 @@ router.post(
     asyncHandler(authService.register)
 )
 
+router.post(
+    "/sidnUp",
+    asyncHandler(authService.register)
+)
 router.patch(
     "/verifyEmail",
     validation(authValidation.confirmEmailSchema),

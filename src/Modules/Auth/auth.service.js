@@ -6,7 +6,7 @@ import { generateToken } from "../../utils/token/token.js"
 import axios from "axios";
 import jwt from "jsonwebtoken"
 export const register = async  (req,res,next)=>{
-    const {userName , email , password ,mobileNumber}= req.body
+    const {userName , email , password }= req.body
 
     const user = await dbService.findOne({model: UserModel , filter: {email}})
     if(user) return next (new Error("User already exists",{cause: 409}))
@@ -17,7 +17,6 @@ export const register = async  (req,res,next)=>{
         userName , 
         email , 
         password,
-        mobileNumber,
         OTP:[{
             OTPtype:OTPType.confirmEmail,
             code:hash({plainText:otp}),
@@ -29,7 +28,7 @@ export const register = async  (req,res,next)=>{
     emailEmitter.emit("sendEmail",email,newUser.userName,newUser._id)
     return res.status(200).json({success:true , message :"user Registered successfully", newUser})
 }
-
+/*
 export const verifyEmail = async (req, res, next) => {
         const { code, email } = req.body;
 
@@ -67,6 +66,71 @@ export const verifyEmail = async (req, res, next) => {
 
         return res.status(200).json({ success: true, message: "Email verified successfully" });
 };
+*/
+export const signUp = async (req, res, next) => {
+  try {
+    const { userName, email, password } = req.body;
+
+    // 1- تأكد إن اليوزر مش موجود
+    const existingUser = await dbService.findOne({ model: UserModel, filter: { email } });
+    if (existingUser) {
+      const error = new Error("User already exists");
+      error.status = 409;
+      return next(error);
+    }
+
+    // 2- هش الباسورد
+    const hashedPassword = await hashPassword(password);
+
+    // 3- إنشاء المستخدم
+    const newUser = await dbService.create({
+      model: UserModel,
+      data: {
+        userName,
+        email,
+        password: hashedPassword,
+        isVerified: false, // افترض إنه لازم يتفعل بالايميل بعدين
+      },
+    });
+
+    // 4- إرسال إيميل تأكيد (لو عندك OTP أو لينك تفعيل)
+    // لو عندك otp وتستخدمه في إيميل التأكيد، ممكن تولده هنا وتخزنه في newUser ثم تبعته
+    emailEmitter.emit("sendEmail", email, userName, newUser._id);
+
+    // 5- تسجيل الدخول تلقائياً (توليد توكنات)
+    // استخدم نفس الكود الموجود في login مع التعديلات البسيطة
+    const access_token = generateToken({
+      payload: { id: newUser._id },
+      signature: process.env.USER_ACCESS_TOKEN,
+      options: { expiresIn: process.env.ACCESS_TOKEN_EXPIRESS },
+    });
+
+    const refresh_token = generateToken({
+      payload: { id: newUser._id },
+      signature: process.env.USER_ACCESS_TOKEN,
+      options: { expiresIn: process.env.REFRESH_TOKEN_EXPIRESS },
+    });
+
+    // 6- رد على المستخدم مع التوكنز والبيانات الأساسية
+    return res.status(201).json({
+      success: true,
+      message: "User registered successfully and logged in",
+      tokens: {
+        access_token,
+        refresh_token,
+        roleId: 2, // لو انت عارف قيمة الroleId حسب الuser role عندك
+      },
+      user: {
+        id: newUser._id,
+        userName: newUser.userName,
+        email: newUser.email,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export const login = async (req,res,next)=>{
     const {email , password} =req.body;
