@@ -88,7 +88,7 @@ export const signUp = async (req, res, next) => {
         userName,
         email,
         password,
-        isVerified: false, // افترض إنه لازم يتفعل بالايميل بعدين
+        isVerified: true, // افترض إنه لازم يتفعل بالايميل بعدين
       },
     });
 
