@@ -14,7 +14,7 @@ router.post(
 
 router.post(
     "/sidnUp",
-    asyncHandler(authService.register)
+    asyncHandler(authService.signUp)
 )
 router.patch(
     "/verifyEmail",
