@@ -5,6 +5,7 @@ import { compareHash, hash } from "../../utils/hashing/hash.js";
 import { generateToken } from "../../utils/token/token.js"
 import axios from "axios";
 import jwt from "jsonwebtoken"
+/*
 export const register = async  (req,res,next)=>{
     const {userName , email , password }= req.body
 
@@ -28,6 +29,7 @@ export const register = async  (req,res,next)=>{
     emailEmitter.emit("sendEmail",email,newUser.userName,newUser._id)
     return res.status(200).json({success:true , message :"user Registered successfully", newUser})
 }
+*/
 /*
 export const verifyEmail = async (req, res, next) => {
         const { code, email } = req.body;
@@ -67,6 +69,7 @@ export const verifyEmail = async (req, res, next) => {
         return res.status(200).json({ success: true, message: "Email verified successfully" });
 };
 */
+
 export const signUp = async (req, res, next) => {
   try {
     const { userName, email, password } = req.body;
