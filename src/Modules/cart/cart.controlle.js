@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { allowTo, authentication } from "../../middlewares/auth.middleware.js";
+import { authentication } from "../../middlewares/auth.middleware.js";
 import * as cart from './services/cart.service.js'
 const router=Router()
 router.post('/addtocart',authentication(),cart.addProductToCart)

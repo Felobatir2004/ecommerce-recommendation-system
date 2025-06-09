@@ -4,10 +4,10 @@ import { UserModel } from "../../../DB/Models/user.model.js";
  export const addProductToCart = async (req, res) => {
     try {
       const userId = req.user._id;
-      const { productId, quantity } = req.body;
+      const { productId } = req.body;
   
-      if (!productId || !quantity || quantity < 1) {
-        return res.status(400).json({ error: "Product ID and valid quantity required" });
+      if (!productId ) {
+        return res.status(400).json({ error: "Product ID is required" });
       }
   
       const product = await Product.findById(productId);
@@ -40,7 +40,6 @@ import { UserModel } from "../../../DB/Models/user.model.js";
         cart.cartItems.push({ product: productId, quantity, price: productPrice });
       }
       cart.totalCartPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-      cart.productQuintity = cart.cartItems.reduce((acc, item) => acc + item.quantity, 0); 
       await cart.save();
       res.status(200).json({ message: "Product added to cart", cart });
   
@@ -106,14 +105,12 @@ export const getSimilarProductsFromCart = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Step 1: Get user and populate cart items
     const user = await UserModel.findById(userId).populate("cart");
 
     if (!user || !user.cart || user.cart.length === 0) {
       return res.status(404).json({ success: false, message: "No products in cart" });
     }
 
-    // Step 2: Extract productIds and brands from cart
     const cartProductIds = [];
     const brands = new Set();
 
