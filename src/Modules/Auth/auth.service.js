@@ -1,6 +1,6 @@
 import { OTPType, roleType, UserModel } from "../../DB/Models/user.model.js";
 import * as dbService from "../../DB/dbService.js"
-import { emailEmitter, otp } from "../../utils/email/email.event.js"
+import { emailEmitter } from "../../utils/email/email.event.js"
 import { compareHash, hash } from "../../utils/hashing/hash.js";
 import { generateToken } from "../../utils/token/token.js"
 import axios from "axios";
