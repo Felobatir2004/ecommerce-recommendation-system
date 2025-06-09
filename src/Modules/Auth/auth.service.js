@@ -72,7 +72,7 @@ export const verifyEmail = async (req, res, next) => {
 
 export const signUp = async (req, res, next) => {
   try {
-    const { userName, email, password } = req.body;
+    const { userName, email, password , mobileNumber } = req.body;
 
     const existingUser = await dbService.findOne({ model: UserModel, filter: { email } });
     if (existingUser) {
@@ -87,6 +87,7 @@ export const signUp = async (req, res, next) => {
         userName,
         email,
         password,
+        mobileNumber,
         isVerified: true, 
       },
     });
