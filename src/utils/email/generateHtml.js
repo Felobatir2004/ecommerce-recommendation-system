@@ -1,79 +1,54 @@
-export const template = (code, name, subject) => `<!DOCTYPE html>
+export const welcomeTemplate = (name) => `<!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .email-container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .email-header {
-            text-align: center;
-            background-color: #007BFF;
-            color: white;
-            padding: 10px;
-            border-radius: 5px 5px 0 0;
-        }
-        .email-body {
-            padding: 20px;
-        }
-        .email-body h2 {
-            color: #007BFF;
-        }
-        .activation-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-        .activation-button:hover {
-            background-color: #0056b3;
-        }
-        .email-footer {
-            text-align: center;
-            font-size: 14px;
-            color: #777;
-            padding: 10px 0;
-            border-top: 1px solid #ddd;
-            margin-top: 20px;
-        }
-        .email-footer a {
-            color: #007BFF;
-            text-decoration: none;
-        }
-    </style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 0;
+      margin: 0;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+    .email-header {
+      background: #007BFF;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      border-radius: 8px 8px 0 0;
+    }
+    .email-body {
+      padding: 20px;
+      color: #333;
+    }
+    .email-footer {
+      text-align: center;
+      font-size: 14px;
+      color: #999;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    <div class="email-container">
-        <div class="email-header">
-            <h1>${subject}</h1>
-        </div>
-        <div class="email-body">
-            <h2>Hello, ${name}</h2>
-            <p>Thank you for signing up with <strong>Shopop</strong>. To complete your registration and start using your account, please use the code below:</p>
-            <h2 class="activation-button">${code}</h2>
-            <p>If you did not sign up for this account, please ignore this email.</p>
-            <p>Best regards,<br>The <strong>Shopop</strong> Team</p>
-        </div>
-        <div class="email-footer">
-            <p>&copy; 2025 Shopop. All rights reserved.</p>
-            <p><a href="https://shopop.com/support">Contact Support</a> | <a href="https://shopop.com/unsubscribe">Unsubscribe</a></p>
-        </div>
+  <div class="email-container">
+    <div class="email-header">
+      <h1>Welcome to Shopop!</h1>
     </div>
+    <div class="email-body">
+      <p>Hi <strong>${name}</strong>,</p>
+      <p>Thank you for registering at <strong>Shopop</strong>. We're excited to have you on board!</p>
+      <p>Feel free to explore and enjoy our services.</p>
+      <p>Best regards,<br />The Shopop Team</p>
+    </div>
+    <div class="email-footer">
+      <p>&copy; 2025 Shopop. All rights reserved.</p>
+    </div>
+  </div>
 </body>
-</html>
-`;
+</html>`;
