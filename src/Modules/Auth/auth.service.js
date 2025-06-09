@@ -92,7 +92,7 @@ export const signUp = async (req, res, next) => {
     });
 
 
-    emailEmitter.emit("sendEmail", email, userName, newUser._id);
+emailEmitter.emit("sendWelcomeEmail", email, newUser.userName);
 
 
     const access_token = generateToken({
