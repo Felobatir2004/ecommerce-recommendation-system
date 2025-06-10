@@ -1,9 +1,9 @@
 import { UserModel } from "../../../DB/Models/user.model.js";
 import { Product } from './../../../DB/Models/product.model.js';
 export const addtowithlist=async(req,res,next)=>{
-const {userId}=req.body
+const {userId , Product}=req.body
 let withlist= await UserModel.findByIdAndUpdate(userId,
-    {$addToSet:{withlist:req.body.Product}},{new:true})
+    {$addToSet:{withlist:Product}},{new:true})
     if(!withlist)
         {
             res.json({message:"withlist not found"})
