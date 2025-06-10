@@ -1,22 +1,27 @@
 import { UserModel } from "../../../DB/Models/user.model.js";
 import { Product } from './../../../DB/Models/product.model.js';
 import mongoose from "mongoose";
+const { Types } = mongoose;
 
 export const addToWishlist = async (req, res, next) => {
   try {
     const { userId, productId } = req.body;
 
+    // ✅ التحقق من الحقول المطلوبة
     if (!userId || !productId) {
       return res.status(400).json({ message: "userId and productId are required" });
     }
 
-    // ✅ Check if userId is a valid ObjectId string
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
+    // ✅ التحقق من صحة ObjectId يدويًا
+    if (!Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid userId format" });
     }
 
+    // ✅ تحويل userId إلى ObjectId يدويًا
+    const userObjectId = new Types.ObjectId(userId);
+
     const user = await UserModel.findByIdAndUpdate(
-      userId,
+      userObjectId,
       { $addToSet: { withlist: productId } },
       { new: true }
     ).populate("withlist"); // Optional: populate product details
@@ -28,7 +33,7 @@ export const addToWishlist = async (req, res, next) => {
     res.status(200).json({ message: "Product added to wishlist", wishlist: user.withlist });
   } catch (error) {
     console.error("Error in addToWishlist:", error);
-    res.status(500).json({ success: false, message: error.message, stack: error.stack });
+    next(error);
   }
 };
 
