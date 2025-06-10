@@ -3,11 +3,10 @@
 import { UserModel } from "../../../DB/Models/user.model.js";
 export const addProductToCart = async (req, res) => {
   try {
-    const userId = req.user._id;
-    const { productId, quantity = 1 } = req.body;
+    const { userId, productId, quantity = 1 } = req.body;
 
-    if (!productId) {
-      return res.status(400).json({ error: "Product ID is required" });
+    if (!userId || !productId) {
+      return res.status(400).json({ error: "User ID and Product ID are required" });
     }
 
     const product = await Product.findById(productId);
@@ -23,6 +22,7 @@ export const addProductToCart = async (req, res) => {
     const productPrice = product.price;
 
     let cart = await cartModel.findOne({ user: userId });
+
     if (!cart) {
       cart = await cartModel.create({
         user: userId,
@@ -47,8 +47,14 @@ export const addProductToCart = async (req, res) => {
     }
 
     // Recalculate totals
-    cart.totalCartPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    cart.productQuintity = cart.cartItems.reduce((acc, item) => acc + item.quantity, 0);
+    cart.totalCartPrice = cart.cartItems.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+    cart.productQuintity = cart.cartItems.reduce(
+      (acc, item) => acc + item.quantity,
+      0
+    );
 
     await cart.save();
 
@@ -59,7 +65,6 @@ export const addProductToCart = async (req, res) => {
     res.status(500).json({ error: "Server Error", details: err.message });
   }
 };
-
 
   export const getUserCart = async (req, res) => {
     try {
