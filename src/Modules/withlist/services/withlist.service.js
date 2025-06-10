@@ -47,12 +47,27 @@ export const addToWishlist = async (req, res, next) => {
                 }
                 res.json({message:"withlist",withlist})
             }
-            export const getallinwithlist=async(req,res,next)=>{
-              const {userId} = req.body
-              let withlist= await UserModel.findById(userId)
-                    if(!withlist)
-                        {
-                            res.json({message:"withlist not found"})
-                        }
-                        res.json({message:"withlist",withlist})
-                    }
+export const getAllInWishlist = async (req, res, next) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId || !Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid or missing userId" });
+    }
+
+    const user = await UserModel.findById(userId).populate("withlist");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Wishlist retrieved successfully",
+      wishlist: user.withlist,
+    });
+  } catch (error) {
+    console.error("Error in getAllInWishlist:", error);
+    next(error);
+  }
+};
