@@ -167,11 +167,15 @@ export const login = async (req,res,next)=>{
     }
     return res.status(200).json({
         success: true,
-         tokens: {
+/*
+        tokens: {
             access_token,
             refresh_token,
             roleId
          }
+  */
+        user
+
     })
 }
 
