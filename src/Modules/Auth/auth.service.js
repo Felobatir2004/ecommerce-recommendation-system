@@ -130,16 +130,13 @@ emailEmitter.emit("sendWelcomeEmail", email, newUser.userName);
 
 export const login = async (req,res,next)=>{
     const {email , password} =req.body;
-
     const user =await dbService.findOne({model:UserModel , filter: {email}})
     if(!user) return next(new Error("user not found",{cause: 404}))
-    
     if(!user.isVerified)
         return next (new Error("email not verified",{cause: 401}))
     
     if(!compareHash({plainText: password, hash: user.password}))
         return next (new Error("invalid password",{cause: 400}))
-
     const access_token = generateToken({
         payload:{id:user._id},
         signature: user.role === roleType.User
@@ -147,7 +144,6 @@ export const login = async (req,res,next)=>{
           : process.env.ADMIN_ACCESS_TOKEN,
         options:{expiresIn: process.env.ACCESS_TOKEN_EXPIRESS}
     })
-
     const refresh_token = generateToken({
         payload:{id:user._id},
         signature: user.role === roleType.User
@@ -167,7 +163,6 @@ export const login = async (req,res,next)=>{
     }
     return res.status(200).json({
         success: true,
-
         tokens: {
             access_token,
             refresh_token,
@@ -178,8 +173,6 @@ export const login = async (req,res,next)=>{
             userName: user.userName,
             email: user.email,
         },
-        
-
     })
 }
 

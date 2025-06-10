@@ -24,7 +24,7 @@ export const decodedToken = async ({authorization = "",tokenType = tokenTypes.ac
                 ACCESS_SIGNATURE = process.env.ADMIN_ACCESS_TOKEN
                 REFRESH_SIGNATURE = process.env.ADMIN_REFRESH_TOKEN
                 break;
-            case "User":
+            case "user":
                 ACCESS_SIGNATURE = process.env.USER_ACCESS_TOKEN
                 REFRESH_SIGNATURE = process.env.USER_REFRESH_TOKEN
                 break;
