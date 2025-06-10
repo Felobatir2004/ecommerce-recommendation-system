@@ -1,54 +1,65 @@
  import { cartModel } from "../../../DB/Models/cart.model.js";
  import {Product} from "../../../DB/Models/product.model.js"
 import { UserModel } from "../../../DB/Models/user.model.js";
- export const addProductToCart = async (req, res) => {
-    try {
-      const userId = req.user._id;
-      const { productId } = req.body;
-  
-      if (!productId ) {
-        return res.status(400).json({ error: "Product ID is required" });
-      }
-  
-      const product = await Product.findById(productId);
-      if (!product) {
-        return res.status(404).json({ error: "Product not found" });
-      }
-      let user = await UserModel.findByIdAndUpdate(req.user._id,{$addToSet:{cart:productId}},{new:true})  
-      const productPrice = product.price;
-      let cart = await cartModel.findOne({ user: userId });
-      
-      if (!cart) {
-        cart = await cartModel.create({
-          user: userId,
-          cartItems: [{
-            product: productId,
-            quantity,
-            price: productPrice
-          }],
-          totalCartPrice: productPrice * quantity,
-          productQuintity: quantity 
-        
-        });
-        return res.status(201).json({ message: "Cart created and product added", cart });
-      }
-      const itemIndex = cart.cartItems.findIndex(item => item.product.toString() === productId);
-      if (itemIndex > -1) {
-        cart.cartItems[itemIndex].quantity += quantity;
-      } else {
-      
-        cart.cartItems.push({ product: productId, quantity, price: productPrice });
-      }
-      cart.totalCartPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-      cart.productQuintity = cart.cartItems.reduce((acc, item) => acc + item.quantity, 0); 
-      await cart.save();
-      res.status(200).json({ message: "Product added to cart", cart });
-  
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Server Error", details: err.message});
+export const addProductToCart = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { productId, quantity = 1 } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ error: "Product ID is required" });
     }
-  };
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Add productId to user's cart array (optional logic)
+    await UserModel.findByIdAndUpdate(userId, {
+      $addToSet: { cart: productId }
+    });
+
+    const productPrice = product.price;
+
+    let cart = await cartModel.findOne({ user: userId });
+    if (!cart) {
+      cart = await cartModel.create({
+        user: userId,
+        cartItems: [{
+          product: productId,
+          quantity,
+          price: productPrice
+        }],
+        totalCartPrice: productPrice * quantity,
+        productQuintity: quantity
+      });
+
+      return res.status(201).json({ message: "Cart created and product added", cart });
+    }
+
+    const itemIndex = cart.cartItems.findIndex(item => item.product.toString() === productId);
+
+    if (itemIndex > -1) {
+      cart.cartItems[itemIndex].quantity += quantity;
+    } else {
+      cart.cartItems.push({ product: productId, quantity, price: productPrice });
+    }
+
+    // Recalculate totals
+    cart.totalCartPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    cart.productQuintity = cart.cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+    await cart.save();
+
+    res.status(200).json({ message: "Product added to cart", cart });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server Error", details: err.message });
+  }
+};
+
 
   export const getUserCart = async (req, res) => {
     try {
