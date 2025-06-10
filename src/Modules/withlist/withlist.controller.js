@@ -3,6 +3,6 @@ import * as wishlist from './services/withlist.service.js'
 import { authentication } from "../../middlewares/auth.middleware.js";
 const router=Router()
 router.patch('/addtowithlist',wishlist.addToWishlist)
-router.delete('/removefromwithlist/:id',authentication(),wishlist.removefromwithlist)
-router.get('/getallinwithlist',authentication(),wishlist.getallinwithlist)
+router.delete('/removefromwithlist/:id',wishlist.removefromwithlist)
+router.get('/getallinwithlist',wishlist.getallinwithlist)
 export default router

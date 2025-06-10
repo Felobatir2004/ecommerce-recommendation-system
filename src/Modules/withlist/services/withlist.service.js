@@ -48,7 +48,8 @@ export const addToWishlist = async (req, res, next) => {
                 res.json({message:"withlist",withlist})
             }
             export const getallinwithlist=async(req,res,next)=>{
-                let withlist= await UserModel.findById(req.user._id)
+              const {userId} = req.body
+              let withlist= await UserModel.findById(userId)
                     if(!withlist)
                         {
                             res.json({message:"withlist not found"})
