@@ -71,10 +71,6 @@ export const getAllInWishlist = async (req, res, next) => {
   try {
     const { userId } = req.body;
 
-    if (!userId || !Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ success: false, message: "Invalid or missing userId" });
-    }
-
     const user = await UserModel.findById(userId).populate("withlist");
 
     if (!user) {
