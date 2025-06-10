@@ -38,15 +38,35 @@ export const addToWishlist = async (req, res, next) => {
 };
 
 
-    export const removefromwithlist=async(req,res,next)=>{
-        let withlist= await UserModel.findByIdAndUpdate(req.user._id,
-            {$pull:{withlist:req.params.id}},{new:true})
-            if(!withlist)
-                {
-                    res.json({message:"withlist not found"})
-                }
-                res.json({message:"withlist",withlist})
-            }
+export const removeFromWishlist = async (req, res, next) => {
+  try {
+    const { userId } = req.body;
+    const productId = req.params.id;
+
+    if (!userId || !Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid or missing userId" });
+    }
+
+    const user = await UserModel.findByIdAndUpdate(
+      userId,
+      { $pull: { withlist: productId } },
+      { new: true }
+    ).populate("withlist");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Product removed from wishlist",
+      wishlist: user.withlist,
+    });
+  } catch (error) {
+    console.error("Error in removeFromWishlist:", error);
+    next(error);
+  }
+};
 export const getAllInWishlist = async (req, res, next) => {
   try {
     const { userId } = req.body;
