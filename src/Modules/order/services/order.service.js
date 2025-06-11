@@ -83,3 +83,40 @@ export const markAsDelivered = async (req, res, next) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+export const makeOrder = async (req, res, next) => {
+  const { userId } = req.params;
+  const {orderId,paymenttype}= req.body;
+  if (paymenttype === "cash") {
+      const order = await Order.findByIdAndUpdate(
+    orderId,
+    { user: userId,
+      name:req.body.name,
+      email:req.body.email,
+      address:req.body.address,
+     },
+    { new: true }
+  );
+  }
+  else if (paymenttype === "visa") {
+      const order = await Order.findByIdAndUpdate(
+    orderId,
+    { user: userId,
+      name:req.body.name,
+      email:req.body.email,
+      phoneNumber:req.body.phoneNumber,
+      address:req.body.address,
+      cardNumber:req.body.cardNumber,
+      cvv:req.body.cvv,
+      expiryDate:req.body.expiryDate,
+     },
+    { new: true }
+  );
+  }
+
+  if (!order) {
+    return res.status(404).json({ message: "Order not found" });
+  }
+  res.json({ message: "order make successfly", order });
+};

@@ -9,14 +9,16 @@ const schema=new mongoose.Schema({
     }
   ],
   totalorderprice:Number,
-  shippingaddress:{
-    city:String,
-    street:String,
-    phone:String
-  },
+  name:String,
+  email:String,
+  phoneNumber:String,
+  address:String,
+  cardNumber:String,
+  cvv:String,
+  expiryDate:String,
   paymenttype:{
     type:String,
-    enum:['cash','card'],
+    enum:['cash','visa'],
     default:'cash'
   },
   ispaid:{

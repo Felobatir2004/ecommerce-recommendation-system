@@ -10,7 +10,6 @@ import categorymodel from "../../../DB/Models/category.model.js";
 
 
 export const addproduct = async (req, res, next) => {
-  try {
     const { brand, imageURL, name, price, rate, categories } = req.body;
 
     if (!brand || !imageURL || !name || !price || !categories) {
@@ -44,10 +43,6 @@ export const addproduct = async (req, res, next) => {
       product,
     });
 
-  } catch (error) {
-    console.error("Add Product Error:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
 };
 
 export const getproductById=async(req,res,next)=>{
