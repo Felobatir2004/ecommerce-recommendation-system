@@ -298,7 +298,6 @@ export const decreaseCartItemQuantity = async (req, res) => {
     const { userId } = req.params;
     const { productId, decreaseBy = 1 } = req.body;
 
-    // Validate IDs
     if (!userId || !productId) {
       return res.status(400).json({ error: "User ID and Product ID are required" });
     }
@@ -329,7 +328,8 @@ export const decreaseCartItemQuantity = async (req, res) => {
     const newQty = currentQty - decreaseBy;
 
     if (newQty < 1) {
-      return res.status(400).json({ error: "Quantity cannot be less than 1" });
+      // Remove item from cart
+      cart.cartItems.splice(itemIndex, 1);
     } else {
       cart.cartItems[itemIndex].quantity = newQty;
     }
@@ -348,7 +348,9 @@ export const decreaseCartItemQuantity = async (req, res) => {
     await cart.save();
 
     return res.status(200).json({
-      message: `Decreased quantity of product in cart by ${decreaseBy}`,
+      message: newQty < 1
+        ? "Product removed from cart as quantity dropped below 1"
+        : `Decreased quantity of product in cart by ${decreaseBy}`,
       cart,
     });
 
