@@ -13,16 +13,19 @@ export const addproduct = async (req, res, next) => {
   try {
     const { brand, imageURL, name, price, rate, categories } = req.body;
 
-    // التحقق من القيم المطلوبة
     if (!brand || !imageURL || !name || !price || !categories) {
       return res.status(400).json({ error: "All required fields must be filled." });
     }
 
-    // تحقق من وجود الكاتيجوري، ولو مش موجود أضفه
+    // تحقق من وجود الكاتيجوري
     let category = await categorymodel.findOne({ name: categories });
 
+    // لو مش موجودة، أضفها
     if (!category) {
       category = await categorymodel.create({ name: categories });
+      console.log(`Category '${categories}' created.`);
+    } else {
+      console.log(`Category '${categories}' already exists.`);
     }
 
     const product = new Product({
@@ -35,7 +38,11 @@ export const addproduct = async (req, res, next) => {
     });
 
     await product.save();
-    return res.status(201).json({ message: "Product added successfully", product });
+
+    return res.status(201).json({
+      message: "Product added successfully",
+      product,
+    });
 
   } catch (error) {
     console.error("Add Product Error:", error);
