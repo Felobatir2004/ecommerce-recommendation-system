@@ -82,29 +82,50 @@ export const addProductToCart = async (req, res) => {
       res.status(500).json({ error: "Server error" });
     }
   };
-  export const removeProductFromCart = async (req, res) => {
-    try {
-      const userId = req.user._id;
-      const { productId } = req.params;
-  
-      const cart = await cartModel.findOne({ user: userId });
-      if (!cart) return res.status(404).json({ message: "Cart not found" });
-  
-      const itemIndex = cart.cartItems.findIndex(item => item.product.toString() === productId);
-      if (itemIndex === -1) return res.status(404).json({ message: "Product not in cart" });
-  
-      cart.cartItems.splice(itemIndex, 1);
-  
-      cart.totalCartPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-      cart.productQuintity = cart.cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  
-      await cart.save();
-      res.status(200).json({ message: "Product removed from cart", cart });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Server error" });
+export const removeProductFromCart = async (req, res) => {
+  try {
+    const {userId} = req.params;
+    const { productId } = req.body;
+
+    if (!Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ message: "Invalid productId" });
     }
-  };
+
+    const cart = await cartModel.findOne({ user: userId });
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    const itemIndex = cart.cartItems.findIndex(
+      item => item.product.toString() === productId
+    );
+
+    if (itemIndex === -1) {
+      return res.status(404).json({ message: "Product not in cart" });
+    }
+
+    cart.cartItems.splice(itemIndex, 1);
+
+    cart.totalCartPrice = cart.cartItems.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+
+    cart.productQuantity = cart.cartItems.reduce(
+      (acc, item) => acc + item.quantity,
+      0
+    );
+
+    await cart.save();
+
+    res.status(200).json({ message: "Product removed from cart", cart });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+};
+
   export const clearUserCart = async (req, res) => {
     try {
       const userId = req.user._id;
