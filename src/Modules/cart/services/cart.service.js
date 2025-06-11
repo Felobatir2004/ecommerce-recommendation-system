@@ -1,6 +1,8 @@
  import { cartModel } from "../../../DB/Models/cart.model.js";
  import {Product} from "../../../DB/Models/product.model.js"
 import { UserModel } from "../../../DB/Models/user.model.js";
+import {Order} from "../../../DB/Models/order.model.js";
+
 export const addProductToCart = async (req, res) => {
   try {
     const { userId, productId, quantity = 1 } = req.body;
@@ -161,10 +163,48 @@ export const getSimilarProductsFromCart = async (req, res) => {
   }
 };
 
-export const checkout = async (req, res) => {
-    const userId = req.user._id;
-    const cart = await cartModel.findOne({ user: userId }).populate('cartItems.product');
-    if (!cart) return res.status(404).json({ message: "Cart is empty" });
-    const updateCart = await cartModel.findOneAndUpdate({ user: userId }, { $set: { cartItems: [] , totalCartPrice: 0,productQuintity:0 } }, { new: true });
-    res.status(200).json({ updateCart });
+export const checkout = async (req, res, next) => {
+  try {
+    const {userId} = req.params;
+
+    // 1. Get the user's cart
+    const cart = await cartModel.findOne({ user: userId }).populate("cartItems.product");
+
+    if (!cart || cart.cartItems.length === 0) {
+      return res.status(404).json({ message: "Cart is empty" });
+    }
+
+    // 2. Create order from cart
+    const newOrder = await Order.create({
+      user: userId,
+      orderItems: cart.cartItems.map((item) => ({
+        product: item.product._id,
+        quantity: item.quantity,
+        price: item.product.price,
+      })),
+      totalOrderPrice: cart.totalCartPrice,
+    });
+
+    // 3. Clear cart after order is created
+    const updatedCart = await cartModel.findOneAndUpdate(
+      { user: userId },
+      {
+        $set: {
+          cartItems: [],
+          totalCartPrice: 0,
+          productQuintity: 0,
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: "Checkout successful, order created, and cart cleared.",
+      order: newOrder,
+      cart: updatedCart,
+    });
+  } catch (error) {
+    console.error("Error in checkout:", error);
+    next(error);
+  }
 };
