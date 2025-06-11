@@ -163,30 +163,43 @@ export const getSimilarProductsFromCart = async (req, res) => {
   }
 };
 
+import { Types } from "mongoose";
+
 export const checkout = async (req, res, next) => {
   try {
-    const {userId} = req.params;
+    const { userId } = req.params;
 
-    // 1. Get the user's cart
+    // ✅ تأكد من صحة الـ userId
+    if (!userId || !Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid or missing userId" });
+    }
+
+    // ✅ اطبع userId للتأكد
+    console.log("Checkout requested by userId:", userId);
+
+    // ✅ جيب الكارت الخاص بالمستخدم
     const cart = await cartModel.findOne({ user: userId }).populate("cartItems.product");
-    console.log(cart);
-    
+
+    // ✅ اطبع بيانات الكارت
+    console.log("Fetched cart:", JSON.stringify(cart, null, 2));
+
+    // ✅ تحقق إن الكارت مش فاضي
     if (!cart || cart.cartItems.length === 0) {
       return res.status(404).json({ message: "Cart is empty" });
     }
 
-    // 2. Create order from cart
+    // ✅ إنشاء الطلب بناءً على الكارت
     const newOrder = await Order.create({
       user: userId,
       orderItems: cart.cartItems.map((item) => ({
         product: item.product._id,
         quantity: item.quantity,
-        price: item.product.price,
+        price: item.price, // ✅ السعر من cart مباشرة
       })),
       totalOrderPrice: cart.totalCartPrice,
     });
 
-    // 3. Clear cart after order is created
+    // ✅ تفريغ الكارت بعد إتمام الطلب
     const updatedCart = await cartModel.findOneAndUpdate(
       { user: userId },
       {
@@ -199,13 +212,15 @@ export const checkout = async (req, res, next) => {
       { new: true }
     );
 
+    // ✅ إرسال الرد
     res.status(200).json({
-      message: "Checkout successful, order created, and cart cleared.",
+      message: "✅ Checkout successful, order created, and cart cleared.",
       order: newOrder,
       cart: updatedCart,
     });
+
   } catch (error) {
-    console.error("Error in checkout:", error);
+    console.error("❌ Error in checkout:", error);
     next(error);
   }
 };
