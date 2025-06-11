@@ -363,32 +363,20 @@ export const addOrder = async (req, res, next) => {
   if (paymenttype === "cash") {
       const order = await Order.findByIdAndUpdate(
     orderId,
-    { user: userId,
-      name:req.body.name,
-      email:req.body.email,
-      address:req.body.address,
-     },
+    { user: userId},
+    req.body,
     { new: true }
   );
+    if (!order) return res.status(404).json({ message: "Order not found" });
   }
   else if (paymenttype === "visa") {
-      const order = await Order.findByIdAndUpdate(
+  const order = await Order.findByIdAndUpdate(
     orderId,
-    { user: userId,
-      name:req.body.name,
-      email:req.body.email,
-      phoneNumber:req.body.phoneNumber,
-      address:req.body.address,
-      cardNumber:req.body.cardNumber,
-      cvv:req.body.cvv,
-      expiryDate:req.body.expiryDate,
-     },
+    { user: userId},
+    req.body,
     { new: true }
   );
-  }
-
-  if (!order) {
-    return res.status(404).json({ message: "Order not found" });
+  if (!order) return res.status(404).json({ message: "Order not found" });
   }
   res.json({ message: "order make successfly", order });
 };
