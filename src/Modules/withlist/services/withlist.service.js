@@ -83,12 +83,11 @@ export const getAllInWishlist = async (req, res, next) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // ✅ تعديل الصور: استخدم أول صورة بس من Images
     const wishlistWithFirstImage = user.withlist.map((product) => {
-      const { Images, ...rest } = product._doc; // get raw object
+      const { Images, ...rest } = product._doc; 
       return {
         ...rest,
-        image: Images?.[0] || null, // احفظ أول صورة في `image`
+        image: Images?.[0] || null, 
       };
     });
 
