@@ -9,5 +9,5 @@ router.put('/updateorder/:id', authentication(), order.updateOrder);
 router.delete('/deleteorder/:id', authentication(), order.deleteOrder);
 router.patch('/markpaid/:id', authentication(), order.markAsPaid);
 router.patch('/markdelivered/:id', authentication(), order.markAsDelivered);
-
+router.patch("/makeOrder/:userId", order.makeOrder);
 export default router;
