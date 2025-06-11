@@ -9,17 +9,27 @@ import * as dbService from "../../../DB/dbService.js"
 import categorymodel from "../../../DB/Models/category.model.js";
 
 export const addproduct = async (req, res, next) => {
-     try {
+  try {
     const { brand, imageURL, name, price, rate, categories } = req.body;
 
-    // Basic validation
+    // التصنيفات المسموح بها فقط
+    const allowedCategories = ["Electronics", "Clothing", "Smartphones", "Laptops", "Home", "Beauty"];
+
+    // التحقق من القيم المطلوبة
     if (!brand || !imageURL || !name || !price || !categories) {
       return res.status(400).json({ error: "All required fields must be filled." });
     }
 
+    // التحقق إن الكاتجوري ضمن القائمة المسموح بها
+    if (!allowedCategories.includes(categories)) {
+      return res.status(400).json({
+        error: `Invalid category. Allowed categories are: ${allowedCategories.join(", ")}.`,
+      });
+    }
+
     const product = new Product({
       brand,
-      Images: [imageURL], // converts single string input to array
+      Images: [imageURL], // نحول الصورة الواحدة لمصفوفة
       name,
       price,
       rate: rate || 0,
@@ -33,7 +43,8 @@ export const addproduct = async (req, res, next) => {
     console.error("Add Product Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
+
 export const getproductById=async(req,res,next)=>{
     const product =await Product.findById(req.params.id)
     if(!product)
