@@ -5,7 +5,8 @@ import {Order} from "../../../DB/Models/order.model.js";
 
 export const addProductToCart = async (req, res) => {
   try {
-    const { userId, productId, quantity = 1 } = req.body;
+    const {userId}=req.params
+    const { productId, quantity = 1 } = req.body;
 
     if (!userId || !productId) {
       return res.status(400).json({ error: "User ID and Product ID are required" });
