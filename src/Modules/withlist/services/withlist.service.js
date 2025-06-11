@@ -68,9 +68,11 @@ export const removeFromWishlist = async (req, res, next) => {
   }
 };
 
+import { Types } from "mongoose";
+
 export const getAllInWishlist = async (req, res, next) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.query; // ✅ استخدم query بدل body
 
     if (!userId || !Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ success: false, message: "Invalid or missing userId" });
