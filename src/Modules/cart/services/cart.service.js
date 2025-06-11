@@ -271,3 +271,68 @@ export const increaseCartItemQuantity = async (req, res) => {
     res.status(500).json({ error: "Server Error", details: err.message });
   }
 };
+
+export const decreaseCartItemQuantity = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { productId, decreaseBy = 1 } = req.body;
+
+    // Validate IDs
+    if (!userId || !productId) {
+      return res.status(400).json({ error: "User ID and Product ID are required" });
+    }
+
+    if (!Types.ObjectId.isValid(userId) || !Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ error: "Invalid userId or productId" });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    const cart = await cartModel.findOne({ user: userId });
+    if (!cart) {
+      return res.status(404).json({ error: "Cart not found for user" });
+    }
+
+    const itemIndex = cart.cartItems.findIndex(
+      (item) => item.product.toString() === productId
+    );
+
+    if (itemIndex === -1) {
+      return res.status(404).json({ error: "Product not found in cart" });
+    }
+
+    const currentQty = cart.cartItems[itemIndex].quantity;
+    const newQty = currentQty - decreaseBy;
+
+    if (newQty < 1) {
+      return res.status(400).json({ error: "Quantity cannot be less than 1" });
+    } else {
+      cart.cartItems[itemIndex].quantity = newQty;
+    }
+
+    // Recalculate totals
+    cart.totalCartPrice = cart.cartItems.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+
+    cart.productQuantity = cart.cartItems.reduce(
+      (acc, item) => acc + item.quantity,
+      0
+    );
+
+    await cart.save();
+
+    return res.status(200).json({
+      message: `Decreased quantity of product in cart by ${decreaseBy}`,
+      cart,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server Error", details: err.message });
+  }
+};
