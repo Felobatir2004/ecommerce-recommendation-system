@@ -21,15 +21,6 @@ const schema=new mongoose.Schema({
     enum:['cash','visa'],
     default:'cash'
   },
-  ispaid:{
-    type:Boolean,
-    default:false
-  },
-  isdeliverd:{
-    type:Boolean,
-    default:false
-  },
-  deliverdat:Date
 }, {timestamps:true});
 
 export const Order = mongoose.model("Order", schema);
