@@ -8,32 +8,30 @@ import { roleType } from "../../../DB/Models/user.model.js";
 import * as dbService from "../../../DB/dbService.js"
 import categorymodel from "../../../DB/Models/category.model.js";
 
+
 export const addproduct = async (req, res, next) => {
   try {
     const { brand, imageURL, name, price, rate, categories } = req.body;
-
-    // التصنيفات المسموح بها فقط
-    const allowedCategories = ["Electronics", "Clothing", "Smartphones", "Laptops", "Home", "Beauty"];
 
     // التحقق من القيم المطلوبة
     if (!brand || !imageURL || !name || !price || !categories) {
       return res.status(400).json({ error: "All required fields must be filled." });
     }
 
-    // التحقق إن الكاتجوري ضمن القائمة المسموح بها
-    if (!allowedCategories.includes(categories)) {
-      return res.status(400).json({
-        error: `Invalid category. Allowed categories are: ${allowedCategories.join(", ")}.`,
-      });
+    // تحقق من وجود الكاتيجوري، ولو مش موجود أضفه
+    let category = await categorymodel.findOne({ name: categories });
+
+    if (!category) {
+      category = await categorymodel.create({ name: categories });
     }
 
     const product = new Product({
       brand,
-      Images: [imageURL], // نحول الصورة الواحدة لمصفوفة
+      Images: [imageURL],
       name,
       price,
       rate: rate || 0,
-      categories,
+      categories: category.name,
     });
 
     await product.save();
