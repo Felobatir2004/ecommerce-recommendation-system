@@ -10,5 +10,5 @@ router.get('/getallsimilarproducts',authentication(),cart.getSimilarProductsFrom
 router.patch("/checkout/:userId",cart.checkoutAndCreateOrder)
 router.patch('/increaseQuantity/:userId',cart.increaseCartItemQuantity)
 router.patch('/decreaseQuantity/:userId',cart.decreaseCartItemQuantity)
-
+router.patch("/makeOrder/:userId",cart.addOrder)
 export default router
