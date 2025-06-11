@@ -81,29 +81,11 @@ export const getAllInWishlist = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-
-    const formattedWishlist = user.withlist.map((product) => {
-      const productObj = product.toObject();
-
-      // ✅ تحويل Images إلى imageURLs
-      if (typeof productObj.Images === "string") {
-        productObj.imageURLs = productObj.Images.split(",").map((url) => url.trim());
-      } else if (Array.isArray(productObj.Images)) {
-        productObj.imageURLs = productObj.Images;
-      } else {
-        productObj.imageURLs = [];
-      }
-
-      // 🧹 إزالة Images من الـ response
-      delete productObj.Images;
-
-      return productObj;
-    });
-
+    
     res.status(200).json({
       success: true,
       message: "Wishlist retrieved successfully",
-      wishlist: formattedWishlist,
+      wishlist: user.withlist,
     });
   } catch (error) {
     console.error("Error in getAllInWishlist:", error);
