@@ -81,14 +81,21 @@ export const getAllInWishlist = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-    
+
+    // Convert imageURLs string to array for each item in wishlist
+    const wishlistWithParsedImages = user.withlist.map(item => ({
+      ...item.toObject(),
+      imageURLs: item.imageURLs?.split(",") || [],
+    }));
+
     res.status(200).json({
       success: true,
       message: "Wishlist retrieved successfully",
-      wishlist: user.withlist,
+      wishlist: wishlistWithParsedImages,
     });
   } catch (error) {
     console.error("Error in getAllInWishlist:", error);
     next(error);
   }
 };
+
