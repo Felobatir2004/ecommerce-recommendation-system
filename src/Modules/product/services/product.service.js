@@ -136,8 +136,8 @@ export const getallproduct=async(req,res,next)=>{
 }
     */
 export const deleteproduct=async(req,res,next)=>{
-    const {product_id}=req.body
-    let product=await Product.findByIdAndDelete(product_id)
+    const {productName , price}=req.body
+    let product=await Product.findOneAndDelete({name:productName,price:price})
     if(!product)
     {
         res.status(404).json({message:"product not found"})

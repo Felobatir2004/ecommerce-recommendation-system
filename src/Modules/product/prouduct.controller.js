@@ -30,8 +30,6 @@ router.get(
 )
 router.delete(
     '/deleteproduct',
-    //allowTo('Admin'),
-    //authentication(),
     asyncHandler(products.deleteproduct)
 )
 router.put(
