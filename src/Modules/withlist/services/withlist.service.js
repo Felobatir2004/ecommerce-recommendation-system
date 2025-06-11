@@ -63,7 +63,7 @@ export const removeFromWishlist = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Product removed from wishlist",
-      wishlist: user.wishlist,
+      wishlist: user.withlist,
     });
   } catch (error) {
     console.error("Error in removeFromWishlist:", error);
