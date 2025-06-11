@@ -5,7 +5,7 @@ const router=Router()
 router.post('/addtocart/:userId',cart.addProductToCart)
 router.delete('/deletefromcart/:id',authentication(),cart.removeProductFromCart)
 router.delete('/deleteAllinCart',authentication(),cart.clearUserCart)
-router.get('/getusercart/userId',cart.getUserCart)
+router.get('/getusercart/:userId',cart.getUserCart)
 router.get('/getallsimilarproducts',authentication(),cart.getSimilarProductsFromCart)
 router.patch("/checkout/:userId",cart.checkout)
 export default router
