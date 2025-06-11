@@ -73,33 +73,28 @@ export const getAllInWishlist = async (req, res, next) => {
     const { userId } = req.params;
 
     if (!userId || !Types.ObjectId.isValid(userId)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid or missing userId" });
+      return res.status(400).json({ success: false, message: "Invalid or missing userId" });
     }
 
     const user = await UserModel.findById(userId).populate("withlist");
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // 🛠 تعديل الصور هنا
-    const products = user.withlist.map((product) => {
+    const formattedWishlist = user.withlist.map((product) => {
       const productObj = product.toObject();
+
+      // ✅ تحويل Images إلى imageURLs
       if (typeof productObj.Images === "string") {
-        productObj.imageURLs = productObj.Images.split(",").map((url) =>
-          url.trim()
-        );
+        productObj.imageURLs = productObj.Images.split(",").map((url) => url.trim());
       } else if (Array.isArray(productObj.Images)) {
         productObj.imageURLs = productObj.Images;
       } else {
         productObj.imageURLs = [];
       }
 
-      // لو مش عايز ترجع Images الأصلية
+      // 🧹 إزالة Images من الـ response
       delete productObj.Images;
 
       return productObj;
@@ -108,11 +103,10 @@ export const getAllInWishlist = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Wishlist retrieved successfully",
-      wishlist: products,
+      wishlist: formattedWishlist,
     });
   } catch (error) {
     console.error("Error in getAllInWishlist:", error);
     next(error);
   }
 };
-
