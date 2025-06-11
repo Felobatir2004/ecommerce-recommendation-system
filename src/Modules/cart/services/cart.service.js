@@ -196,7 +196,7 @@ export const checkout = async (req, res, next) => {
         quantity: item.quantity,
         price: item.price, // ✅ السعر من cart مباشرة
       })),
-      totalOrderPrice: cart.totalCartPrice,
+      totalorderprice: cart.totalCartPrice,
     });
 
     // ✅ تفريغ الكارت بعد إتمام الطلب
