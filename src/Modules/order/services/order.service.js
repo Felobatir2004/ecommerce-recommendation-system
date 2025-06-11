@@ -1,13 +1,5 @@
 import { Order } from "../../../DB/Models/order.model.js";
-export const addOrder = async (req, res, next) => {
-  try {
-    let order = new Order(req.body);
-    await order.save();
-    res.status(201).json({ message: "Order created", order });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+
 export const getOrder = async (req, res, next) => {
   try {
     let order = await Order.findById(req.params.id).populate("user").populate("orderItems.product");
@@ -85,7 +77,7 @@ export const markAsDelivered = async (req, res, next) => {
 };
 
 
-export const makeOrder = async (req, res, next) => {
+export const addOrder = async (req, res, next) => {
   const { userId } = req.params;
   const {orderId,paymenttype}= req.body;
   if (paymenttype === "cash") {
