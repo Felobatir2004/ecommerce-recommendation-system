@@ -68,24 +68,32 @@ export const removeFromWishlist = async (req, res, next) => {
   }
 };
 
+
 export const getAllInWishlist = async (req, res, next) => {
   try {
     const { userId } = req.params;
 
     if (!userId || !Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ success: false, message: "Invalid or missing userId" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid or missing userId" });
     }
 
+    // جلب المستخدم مع المنتجات في الـ wishlist
     const user = await UserModel.findById(userId).populate("withlist");
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
-    // Convert imageURLs string to array for each item in wishlist
-    const wishlistWithParsedImages = user.withlist.map(item => ({
+    // تحويل imageURLs من string إلى array وتصفية القيم الفارغة
+    const wishlistWithParsedImages = user.withlist.map((item) => ({
       ...item.toObject(),
-      imageURLs: item.imageURLs?.split(",") || [],
+      imageURLs: item.imageURLs
+        ? item.imageURLs.split(",").filter((url) => url.trim() !== "")
+        : [],
     }));
 
     res.status(200).json({
@@ -98,4 +106,5 @@ export const getAllInWishlist = async (req, res, next) => {
     next(error);
   }
 };
+
 
