@@ -328,13 +328,14 @@ export const decreaseCartItemQuantity = async (req, res) => {
     const newQty = currentQty - decreaseBy;
 
     if (newQty < 1) {
-      // Remove item from cart
+      // Remove the item from the cart
       cart.cartItems.splice(itemIndex, 1);
     } else {
+      // Update quantity
       cart.cartItems[itemIndex].quantity = newQty;
     }
 
-    // Recalculate totals
+    // Recalculate total price and quantity
     cart.totalCartPrice = cart.cartItems.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0
@@ -349,13 +350,14 @@ export const decreaseCartItemQuantity = async (req, res) => {
 
     return res.status(200).json({
       message: newQty < 1
-        ? "Product removed from cart as quantity dropped below 1"
+        ? "Product removed from cart because quantity dropped below 1"
         : `Decreased quantity of product in cart by ${decreaseBy}`,
       cart,
     });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server Error", details: err.message });
+    return res.status(500).json({ error: "Server Error", details: err.message });
   }
 };
+
