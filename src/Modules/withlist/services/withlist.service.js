@@ -82,19 +82,25 @@ export const getAllInWishlist = async (req, res, next) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // ✅ تعديل الصور: استخدم أول صورة بس من Images
-    const wishlistWithFirstImage = user.withlist.map((product) => {
-      const { Images, ...rest } = product._doc; // get raw object
+    // تعديل الصور من string إلى أول صورة فقط
+    const wishlistWithImage = user.withlist.map((product) => {
+      const raw = product._doc;
+
+      let image = null;
+      if (typeof raw.Images === "string") {
+        image = raw.Images.split(",")[0]; // أول صورة فقط
+      }
+
       return {
-        ...rest,
-        image: Images?.[0] || null, // احفظ أول صورة في `image`
+        ...raw,
+        image, // key جديد فيه أول صورة
       };
     });
 
     res.status(200).json({
       success: true,
       message: "Wishlist retrieved successfully",
-      wishlist: wishlistWithFirstImage,
+      wishlist: wishlistWithImage,
     });
   } catch (error) {
     console.error("Error in getAllInWishlist:", error);
