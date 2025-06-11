@@ -54,7 +54,7 @@ export const removeFromWishlist = async (req, res, next) => {
       userId,
       { $pull: { withlist: productId } },
       { new: true }
-    ).populate("wishlist");
+    ).populate("withlist");
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
