@@ -67,7 +67,6 @@ export const removeFromWishlist = async (req, res, next) => {
     next(error);
   }
 };
-import { Types } from "mongoose";
 
 export const getAllInWishlist = async (req, res, next) => {
   try {
