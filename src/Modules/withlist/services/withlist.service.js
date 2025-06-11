@@ -68,8 +68,6 @@ export const removeFromWishlist = async (req, res, next) => {
   }
 };
 
-import { Types } from "mongoose";
-
 export const getAllInWishlist = async (req, res, next) => {
   try {
     const { userId } = req.query; // ✅ استخدم query بدل body
