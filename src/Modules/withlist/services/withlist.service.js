@@ -82,13 +82,23 @@ export const getAllInWishlist = async (req, res, next) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    // ✅ تعديل الصور: استخدم أول صورة بس من Images
+    const wishlistWithFirstImage = user.withlist.map((product) => {
+      const { Images, ...rest } = product._doc; // get raw object
+      return {
+        ...rest,
+        image: Images?.[0] || null, // احفظ أول صورة في `image`
+      };
+    });
+
     res.status(200).json({
       success: true,
       message: "Wishlist retrieved successfully",
-      wishlist: user.withlist,
+      wishlist: wishlistWithFirstImage,
     });
   } catch (error) {
     console.error("Error in getAllInWishlist:", error);
     next(error);
   }
 };
+
