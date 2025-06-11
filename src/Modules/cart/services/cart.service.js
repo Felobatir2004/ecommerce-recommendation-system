@@ -216,6 +216,7 @@ export const checkout = async (req, res, next) => {
 
 export const increaseCartItemQuantity = async (req, res) => {
   try {
+    const { userId } = req.params;
     const { productId, increaseBy = 1 } = req.body;
 
     // Validate IDs

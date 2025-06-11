@@ -8,4 +8,5 @@ router.delete('/deleteAllinCart',authentication(),cart.clearUserCart)
 router.get('/getusercart/:userId',cart.getUserCart)
 router.get('/getallsimilarproducts',authentication(),cart.getSimilarProductsFromCart)
 router.patch("/checkout/:userId",cart.checkout)
+router.patch('/increaseQuantity/:userId',cart.updateQuantity)
 export default router
