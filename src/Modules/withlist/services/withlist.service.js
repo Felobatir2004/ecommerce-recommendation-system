@@ -52,7 +52,7 @@ export const removeFromWishlist = async (req, res, next) => {
 
     const user = await UserModel.findByIdAndUpdate(
       userId,
-      { $pull: { wishlist: productId } },
+      { $pull: { withlist: productId } },
       { new: true }
     ).populate("wishlist");
 
