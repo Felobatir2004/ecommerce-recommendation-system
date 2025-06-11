@@ -70,7 +70,7 @@ export const removeFromWishlist = async (req, res, next) => {
 
 export const getAllInWishlist = async (req, res, next) => {
   try {
-    const { userId } = req.query;
+    const { userId } = req.params;
 
     if (!userId || !Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ success: false, message: "Invalid or missing userId" });
