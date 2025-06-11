@@ -187,7 +187,7 @@ export const getSimilarProductsFromCart = async (req, res) => {
 
 import { Types } from "mongoose";
 
-export const checkout = async (req, res, next) => {
+export const checkoutAndCreateOrder = async (req, res, next) => {
   try {
     const { userId } = req.params;
 

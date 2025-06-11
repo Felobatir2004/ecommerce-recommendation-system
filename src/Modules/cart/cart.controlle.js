@@ -7,7 +7,7 @@ router.delete('/deletefromcart/:userId',cart.removeProductFromCart)
 router.delete('/deleteAllinCart',authentication(),cart.clearUserCart)
 router.get('/getusercart/:userId',cart.getUserCart)
 router.get('/getallsimilarproducts',authentication(),cart.getSimilarProductsFromCart)
-router.patch("/checkout/:userId",cart.checkout)
+router.patch("/checkout/:userId",cart.checkoutAndCreateOrder)
 router.patch('/increaseQuantity/:userId',cart.increaseCartItemQuantity)
 router.patch('/decreaseQuantity/:userId',cart.decreaseCartItemQuantity)
 
