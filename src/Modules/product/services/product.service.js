@@ -9,51 +9,30 @@ import * as dbService from "../../../DB/dbService.js"
 import categorymodel from "../../../DB/Models/category.model.js";
 
 export const addproduct = async (req, res, next) => {
-    const { name , price , stock , categoryName} = req.body;
-    
-    const user = await dbService.findOne({
-        model: UserModel,
-        filter: { _id: req.user._id },
-    });  
+     try {
+    const { brand, imageURL, name, price, rate, categories } = req.body;
 
-    if (!user) {
-        return res.status(404).json({ message: "User not found" });
+    // Basic validation
+    if (!brand || !imageURL || !name || !price || !categories) {
+      return res.status(400).json({ error: "All required fields must be filled." });
     }
 
-    if (user.role !== roleType.Admin) {
-        return res.status(401).json({ message: "You are not authorized to add product" });
-    }
-    if (!req.file) {
-        return res.status(400).json({ 
-                success: false, 
-                message: "Please upload an image file (JPEG, JPG, PNG)" 
-            });
-        }
-    let customId = nanoid(5)
+    const product = new Product({
+      brand,
+      Images: [imageURL], // converts single string input to array
+      name,
+      price,
+      rate: rate || 0,
+      categories,
+    });
 
-    const {secure_url , public_id} = await cloudinary.uploader.upload(req.file.path,{
-        folder: `product/${customId}/${name}`,
-    })
-    const checkCategory= await dbService.findOne({
-        model: categorymodel,
-        filter: { name: categoryName },
-    })
-    if(!checkCategory) return next(new Error("Category not found",{cause: 404}))
+    await product.save();
+    return res.status(201).json({ message: "Product added successfully", product });
 
-    const product = await Product.create({
-        name,
-        price,
-        stock,
-        Images: {
-            secure_url,
-            public_id
-        },
-        category:categoryName,
-        createdBy: req.user._id,
-
-    });    
-
-    res.status(201).json({ message: "Product created successfully" , product });
+  } catch (error) {
+    console.error("Add Product Error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 }
 export const getproductById=async(req,res,next)=>{
     const product =await Product.findById(req.params.id)
