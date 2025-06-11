@@ -139,7 +139,13 @@ export const deleteproduct = async (req, res, next) => {
     const { name, price } = req.body;
 
     try {
-        const product = await Product.findOneAndDelete({ name: name, price: price });
+        const filter = {
+            name: { $regex: name, $options: "i" },
+            price: price
+        };
+
+        // Delete the first matched product
+        const product = await Product.findOneAndDelete(filter);
 
         if (!product) {
             return res.status(404).json({ message: "product not found" });
@@ -150,6 +156,7 @@ export const deleteproduct = async (req, res, next) => {
         res.status(500).json({ message: "server error", error: error.message });
     }
 };
+
 
 export const updateproduct=async(req,res,next)=>{
     let product =await Product.findByIdAndUpdate(req.params.id,req.body,{new:true})
