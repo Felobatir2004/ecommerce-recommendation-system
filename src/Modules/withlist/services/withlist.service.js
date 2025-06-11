@@ -74,37 +74,32 @@ export const getAllInWishlist = async (req, res, next) => {
     const { userId } = req.params;
 
     if (!userId || !Types.ObjectId.isValid(userId)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid or missing userId" });
+      return res.status(400).json({ success: false, message: "Invalid or missing userId" });
     }
 
-    // جلب المستخدم مع المنتجات في الـ wishlist
-    const user = await UserModel.findById(userId).populate("withlist");
+    const user = await UserModel.findById(userId)
+      .populate({
+        path: "withlist",
+        select: "name brand price rate categories Images" // اختار الحقول المهمة فقط
+      });
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // تحويل imageURLs من string إلى array وتصفية القيم الفارغة
-    const wishlistWithParsedImages = user.withlist.map((item) => ({
+    const wishlistWithFormattedImages = user.withlist.map(item => ({
       ...item.toObject(),
-      imageURLs: item.imageURLs
-        ? item.imageURLs.split(",").filter((url) => url.trim() !== "")
-        : [],
+      imageURLs: item.Images || []  // استخدام Images كمصفوفة الصور
     }));
 
     res.status(200).json({
       success: true,
       message: "Wishlist retrieved successfully",
-      wishlist: wishlistWithParsedImages,
+      wishlist: wishlistWithFormattedImages
     });
   } catch (error) {
     console.error("Error in getAllInWishlist:", error);
     next(error);
   }
 };
-
 
