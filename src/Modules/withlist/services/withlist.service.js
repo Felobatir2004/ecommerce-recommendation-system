@@ -86,15 +86,16 @@ export const getAllInWishlist = async (req, res, next) => {
       const raw = product._doc;
 
       let imageURLs = [];
-      if (typeof raw.Images === "string") {
-        imageURLs = raw.Images.split(",").map(url => url.trim());
+
+      if (raw.Images && typeof raw.Images === "string") {
+        imageURLs = raw.Images.split(',').map(url => url.trim());
       } else if (Array.isArray(raw.Images)) {
         imageURLs = raw.Images;
       }
 
       return {
         ...raw,
-        imageURLs, // field جديد يحتوي على array من الصور
+        imageURLs: imageURLs.filter(url => url), // تأكد إنها مش فاضية
       };
     });
 
