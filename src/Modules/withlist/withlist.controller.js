@@ -4,5 +4,5 @@ import { authentication } from "../../middlewares/auth.middleware.js";
 const router=Router()
 router.patch('/addtowithlist',wishlist.addToWishlist)
 router.delete('/removefromwithlist/:id',wishlist.removeFromWishlist)
-router.get('/getallinwithlist/:id',wishlist.getAllInWishlist)
+router.get('/getallinwithlist/:userID',wishlist.getAllInWishlist)
 export default router
