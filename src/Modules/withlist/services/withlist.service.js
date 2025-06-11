@@ -40,8 +40,8 @@ export const addToWishlist = async (req, res, next) => {
 
 export const removeFromWishlist = async (req, res, next) => {
   try {
-    const { userId } = req.body;
-    const productId = req.params.id;
+    const { userId } = req.params;
+    const {productId} = req.body;
 
     if (!userId || !Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ success: false, message: "Invalid or missing userId" });
