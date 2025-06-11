@@ -118,7 +118,7 @@ export const removeProductFromCart = async (req, res) => {
 
     await cart.save();
 
-    res.status(200).json({ message: "Product removed from cart", cart });
+    res.status(200).json({ cart });
 
   } catch (err) {
     console.error(err);
@@ -283,7 +283,6 @@ export const increaseCartItemQuantity = async (req, res) => {
     await cart.save();
 
     return res.status(200).json({
-      message: `Increased quantity of product in cart by ${increaseBy}`,
       cart,
     });
 
@@ -349,9 +348,6 @@ export const decreaseCartItemQuantity = async (req, res) => {
     await cart.save();
 
     return res.status(200).json({
-      message: newQty < 1
-        ? "Product removed from cart because quantity dropped below 1"
-        : `Decreased quantity of product in cart by ${decreaseBy}`,
       cart,
     });
 
