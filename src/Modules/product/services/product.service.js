@@ -136,15 +136,19 @@ export const getallproduct=async(req,res,next)=>{
 }
     */
 export const deleteproduct = async (req, res, next) => {
-    const { productName, price } = req.body;
+    const { name, price } = req.body;
 
-    let product = await Product.findOneAndDelete({ name: productName, price: price });
+    try {
+        const product = await Product.findOneAndDelete({ name: name, price: price });
 
-    if (!product) {
-        return res.status(404).json({ message: "product not found" });
+        if (!product) {
+            return res.status(404).json({ message: "product not found" });
+        }
+
+        res.json({ message: "product deleted", product });
+    } catch (error) {
+        res.status(500).json({ message: "server error", error: error.message });
     }
-
-    res.json({ message: "product deleted", product });
 };
 
 export const updateproduct=async(req,res,next)=>{
