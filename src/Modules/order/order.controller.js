@@ -2,7 +2,7 @@ import { Router } from "express";
 import { allowTo, authentication } from "../../middlewares/auth.middleware.js";
 import * as order from './services/order.service.js';
 const router = Router();
-router.post('/addorder', order.addOrder);
+router.patch('/addorder', order.addOrder);
 router.get('/getallorders', authentication(), order.getAllOrders);
 router.get('/getorder/:id', authentication(), order.getOrder);
 router.put('/updateorder/:id', authentication(), order.updateOrder);
