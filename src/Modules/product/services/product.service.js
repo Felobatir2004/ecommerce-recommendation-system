@@ -106,7 +106,6 @@ export const getproductsbycategory = async (req, res, next) => {
             return res.status(404).json({ message: "product not found" });
         }
 
-        // تعديل imageURLs لو كانت String
         products = products.map(product => {
             const productObj = product.toObject();
             if (typeof productObj.imageURLs === 'string') {
