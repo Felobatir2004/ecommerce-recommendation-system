@@ -37,21 +37,24 @@ export const addToWishlist = async (req, res, next) => {
   }
 };
 
-
 export const removeFromWishlist = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const {productId} = req.body;
+    const { productId } = req.body;
 
     if (!userId || !Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ success: false, message: "Invalid or missing userId" });
     }
 
+    if (!productId || !Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ success: false, message: "Invalid or missing productId" });
+    }
+
     const user = await UserModel.findByIdAndUpdate(
       userId,
-      { $pull: { withlist: productId } },
+      { $pull: { wishlist: productId } },
       { new: true }
-    ).populate("withlist");
+    ).populate("wishlist");
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
@@ -60,7 +63,7 @@ export const removeFromWishlist = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Product removed from wishlist",
-      wishlist: user.withlist,
+      wishlist: user.wishlist,
     });
   } catch (error) {
     console.error("Error in removeFromWishlist:", error);
