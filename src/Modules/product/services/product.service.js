@@ -10,9 +10,9 @@ import categorymodel from "../../../DB/Models/category.model.js";
 
 
 export const addproduct = async (req, res, next) => {
-    const { brand, imageURLs, name, price, rate, categories } = req.body;
+    const { brand, Images, name, price, rate, categories } = req.body;
 
-    if (!brand || !imageURLs || !name || !price || !categories) {
+    if (!brand || !Images || !name || !price || !categories) {
       return res.status(400).json({ error: "All required fields must be filled." });
     }
 
@@ -29,7 +29,7 @@ export const addproduct = async (req, res, next) => {
 
     const product = new Product({
       brand,
-      Images: [imageURLs],
+      Images: [Images],
       name,
       price,
       rate: rate || 0,
