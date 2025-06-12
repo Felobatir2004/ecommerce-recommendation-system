@@ -63,7 +63,7 @@ const productSchema = new Schema(
         required: true,
     },
   ],
-/*
+
     imageURLs: [
     {
         type: String,
@@ -71,7 +71,7 @@ const productSchema = new Schema(
     },
   ],
 
-*/
+
 
     name: {
       type: String,

@@ -23,7 +23,7 @@ export const addproduct = async (req, res, next) => {
     if (!category) return res.status(404).json({ message: "Category not found" });
     const product = new Product({
       brand,
-      Images: [Images],
+      imageURLs: [Images],
       name,
       price,
       rate: rate || 0,
