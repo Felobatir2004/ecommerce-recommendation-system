@@ -20,13 +20,7 @@ export const addproduct = async (req, res, next) => {
     let category = await categorymodel.findOne({ name: categories });
 
     // لو مش موجودة، أضفها
-    if (!category) {
-      category = await categorymodel.create({ name: categories });
-      console.log(`Category '${categories}' created.`);
-    } else {
-      console.log(`Category '${categories}' already exists.`);
-    }
-
+    if (!category) return res.status(404).json({ message: "Category not found" });
     const product = new Product({
       brand,
       Images: [Images],
