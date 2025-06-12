@@ -9,14 +9,14 @@ const schema=new mongoose.Schema({
     }
   ],
   totalorderprice:Number,
-  name:String,
-  email:String,
-  phoneNumber:String,
-  address:String,
-  cardNumber:String,
+  Name:String,
+  Email:String,
+  Phone:String,
+  Address:String,
+  card:String,
   cvv:String,
-  expiryDate:String,
-  paymenttype:{
+  expiry:String,
+  paymentMethod:{
     type:String,
     enum:['cash','visa'],
     default:'cash'
