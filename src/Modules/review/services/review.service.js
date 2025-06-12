@@ -1,4 +1,5 @@
 //import { review } from "../../../db/model/review.model.js";
+import { ContactModel } from "../../../DB/Models/contact.model.js"
 import { review } from "../../../DB/Models/review.model.js"
 export const addreview =async(req,res,next)=>{
   try{
@@ -38,3 +39,16 @@ export const deletereview=async(req,res,next)=>{
         }
     res.json({message:"review deleted successfly",deletereview})
 }     
+
+export const contactUs=async(req,res,next)=>{
+  try{
+  const { name , email , mobileNumber , message } = req.body
+  const newMessage = new ContactModel({ name, email, message });
+  await newMessage.save()
+  res.status(201).json({message:"message sent successfly"})
+  }
+  catch(error)
+  {
+    res.status(500).json({error:error.message})
+  }
+}

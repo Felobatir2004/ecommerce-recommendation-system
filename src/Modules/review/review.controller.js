@@ -6,4 +6,6 @@ router.get('/getallreview',reviews.getaallreview)
 router.get('/getsinglereview/:id',reviews.getsinglereview)
 router.put('/updatedreview/:id',reviews.updatereview)
 router.delete('/deletereview/:id',reviews.deletereview)
+router.post('/contactUs',reviews.contactUs)
+
 export default router
