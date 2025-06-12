@@ -358,14 +358,30 @@ export const decreaseCartItemQuantity = async (req, res) => {
 };
 
 export const addOrder = async (req, res, next) => {
-  const { userId } = req.params;
-  const {orderId}= req.body;
+  try {
+    const { userId } = req.params;
+    const { orderId } = req.body;
+
+    console.log('Received request - userId:', userId, 'orderId:', orderId, 'body:', req.body);
+
+    if (!userId || !orderId) {
+      return res.status(400).json({ message: 'User ID or Order ID is missing' });
+    }
+
     const order = await Order.findByIdAndUpdate(
-    orderId,
-    { user: userId},
-    req.body,
-    { new: true }
-  );
-    if (!order) return res.status(404).json({ message: "Order not found" });
-  res.json({ message: "order make successfly", order });
+      orderId,
+      { user: userId, ...req.body }, // Merge userId and other body data
+      { new: true, runValidators: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.json({ message: 'order make successfully', order });
+  } catch (error) {
+    console.error('Error updating order:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+
 };
