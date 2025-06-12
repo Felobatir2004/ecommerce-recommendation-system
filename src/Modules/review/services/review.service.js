@@ -42,8 +42,8 @@ export const deletereview=async(req,res,next)=>{
 
 export const contactUs=async(req,res,next)=>{
   try{
-  const { name , email , mobileNumber , message } = req.body
-  const newMessage = new ContactModel({ name, email,  mobileNumber , message });
+  const { name , email , mobileNumber , address ,subject , message } = req.body
+  const newMessage = new ContactModel({ name, email,  mobileNumber ,address, subject , message });
   await newMessage.save()
   res.status(201).json({message:"message sent successfly"})
   }
