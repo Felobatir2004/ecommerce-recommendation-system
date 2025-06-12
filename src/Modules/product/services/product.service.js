@@ -29,7 +29,7 @@ export const addproduct = async (req, res, next) => {
 
     const product = new Product({
       brand,
-      imageURLs: [imageURLs],
+      Images: [imageURLs],
       name,
       price,
       rate: rate || 0,
