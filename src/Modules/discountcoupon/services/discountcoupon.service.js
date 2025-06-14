@@ -58,31 +58,41 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
 };
 */
 
-export const getRecommendations = async (req, res, next) => {
-  const { user_id, type = 'collaborative' } = req.params; // 'type' defaults to 'collaborative'
+export const getCollaborativeRecommendations = async (req, res, next) => {
+  const { user_id } = req.params;
+
   if (!user_id) {
     return res.status(400).json({ message: "user_id is required" });
   }
-  const user = await UserModel.findById(user_id).populate("cart");
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
 
-  const product_id = user.cart.map((item) => item.product_id).join(",");
-  let apiUrl;
-  if (type === 'collaborative') {
-    apiUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(product_id)}`;
-  } else if (type === 'hybrid') {
-    apiUrl = `https://488e-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(user_id)}&product_id=${encodeURIComponent(product_id)}`;
-  } else {
-    return res.status(400).json({ message: "Invalid type. Use 'collaborative' or 'hybrid'" });
-  }
   try {
-    const response = await axios.get(apiUrl);
-    res.json(response.data);
+    const user = await UserModel.findById(user_id).populate("cart");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Get product IDs from user's cart
+    const productIds = user.cart.map((item) => item.product_id).join(",");
+
+    // Build URLs
+    const collaborativeUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(productIds)}`;
+    const hybridUrl = `https://488e-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(user_id)}`;
+
+    // Fetch both recommendations in parallel
+    const [collaborativeRes, hybridRes] = await Promise.all([
+      axios.get(collaborativeUrl),
+      axios.get(hybridUrl)
+    ]);
+
+    return res.json({
+      collaborative: collaborativeRes.data,
+      hybrid: hybridRes.data
+    });
 
   } catch (error) {
-    res.status(500).json({ message: "Error fetching recommendations", error: error.message });
+    return res.status(500).json({
+      message: "Error fetching recommendations",
+      error: error.message
+    });
   }
 };
-
