@@ -1,5 +1,6 @@
 //import { coupon } from "../../../db/model/discountcoupon.model.js";
 import { coupon } from "../../../DB/Models/discountcoupon.model.js"
+import {UserModel} from "../../../DB/Models/user.model.js"
 export const addcoupon=async(req,res,next)=>{
     try{
     let Coupon=new coupon(req.body)
