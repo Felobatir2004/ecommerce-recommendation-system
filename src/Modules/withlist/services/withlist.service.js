@@ -106,7 +106,6 @@ export const getAllInWishlist = async (req, res, next) => {
 };
 
 
-<<<<<<< HEAD
     export const removefromwithlist=async(req,res,next)=>{
         let withlist= await UserModel.findByIdAndUpdate(req.user._id,
             {$pull:{withlist:req.params.id}},{new:true})
@@ -128,7 +127,3 @@ export const getAllInWishlist = async (req, res, next) => {
 
 const router = Router();
 
-// If using Node.js <18, install node-fetch and use: import fetch from 'node-fetch';
-
-=======
->>>>>>> bad2a7adb36df5bce35fc5b2ab258d04d5835f1a

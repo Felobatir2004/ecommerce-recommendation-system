@@ -15,10 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-<<<<<<< HEAD
     "@tensorflow/tfjs": "^4.22.0",
-=======
->>>>>>> bad2a7adb36df5bce35fc5b2ab258d04d5835f1a
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.6.1",
