@@ -66,27 +66,45 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
   }
 
   try {
-    const user = await UserModel.findById(user_id).populate("cart");
+    const user = await UserModel.findById(user_id)
+      .populate("cart")
+      .populate("withlist");
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Get product IDs from user's cart
-    const productIds = user.cart.map((item) => item.product_id).join(",");
+    // 🛒 استخراج IDs من cart و wishlist
+    const cartIds = user.cart.map(item => item._id.toString());
+    const wishlistIds = user.withlist.map(item => item._id.toString());
 
-    // Build URLs
+    // 🔁 إرسال cart IDs إلى نظام التوصيات (collaborative)
+    const productIds = cartIds.join(",");
     const collaborativeUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(productIds)}`;
     const hybridUrl = `https://488e-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(user_id)}`;
 
-    // Fetch both recommendations in parallel
+    // ✅ تنفيذ الطلبات بالتوازي
     const [collaborativeRes, hybridRes] = await Promise.all([
       axios.get(collaborativeUrl),
       axios.get(hybridUrl)
     ]);
 
+    // 📌 نتائج التوصيات
+    const collaborativeProducts = collaborativeRes.data || [];
+    const hybridProducts = hybridRes.data || [];
+
+    // ❌ استبعاد المنتجات الموجودة بالفعل في cart أو wishlist
+    const allExistingIds = new Set([...cartIds, ...wishlistIds]);
+
+    const filterOutExisting = (products) =>
+      products.filter(prod => !allExistingIds.has(prod._id));
+
+    const filteredCollaborative = filterOutExisting(collaborativeProducts);
+    const filteredHybrid = filterOutExisting(hybridProducts);
+
     return res.json({
-      collaborative: collaborativeRes.data,
-      hybrid: hybridRes.data
+      collaborative: filteredCollaborative,
+      hybrid: filteredHybrid
     });
 
   } catch (error) {
