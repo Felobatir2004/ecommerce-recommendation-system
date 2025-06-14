@@ -7,25 +7,22 @@ export const addToWishlist = async (req, res, next) => {
   try {
     const { userId, productId } = req.body;
 
-    // ✅ التحقق من الحقول المطلوبة
     if (!userId || !productId) {
       return res.status(400).json({ message: "userId and productId are required" });
     }
 
-    // ✅ التحقق من صحة ObjectId يدويًا
     if (!Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid userId format" });
     }
 
-    // ✅ تحويل userId إلى ObjectId يدويًا
     const userObjectId = new Types.ObjectId(userId);
 
     const user = await UserModel.findByIdAndUpdate(
       userObjectId,
       { $addToSet: { withlist: productId } },
       { new: true }
-    ).populate("withlist"); // Optional: populate product details
-
+    ).populate("withlist"); 
+    
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
