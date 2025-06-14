@@ -46,7 +46,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
   if (!user_id) {
     return res.status(400).json({ message: "user_id is required" });
   }
-  const apiUrl = `https://e9d1-45-241-47-35.ngrok-free.app/collaborative?user_id=${encodeURIComponent(user_id)}`;
+  const apiUrl = `https://f9ea-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(user_id)}`;
   try {
     const response = await axios.get(apiUrl);
     res.json(response.data);
