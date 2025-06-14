@@ -77,9 +77,12 @@ export const getRecommendations = async (req, res, next) => {
   } else {
     return res.status(400).json({ message: "Invalid type. Use 'collaborative' or 'hybrid'" });
   }
-
+  try {
     const response = await axios.get(apiUrl);
     res.json(response.data);
 
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching recommendations", error: error.message });
+  }
 };
 
