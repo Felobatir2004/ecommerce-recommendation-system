@@ -40,17 +40,19 @@ export const deletediscountcoupon=async(req,res,next)=>{
 }
 // filepath: c:\Users\eng abdo essam\OneDrive\سطح المكتب\graduation ecommerce (4)\graduation ecommerce\ecommerce-recommendation-system\src\Modules\discountcoupon\services\discountcoupon.service.js
 import axios from 'axios';
+import { UserModel } from "../../../DB/Models/user.model.js"
 
 export const getCollaborativeRecommendations = async (req, res, next) => {
   const { user_id } = req.params;
   if (!user_id) {
     return res.status(400).json({ message: "user_id is required" });
   }
-  const user = await dbService.findOne({ model: UserModel, filter: { _id: user_id } });
+  const user = await UserModel.findById(user_id).populate("cart");
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
-  product_id= user.cart
+
+  const product_id = user.cart.map((item) => item.product_id).join(",");
   const apiUrl = ` https://84eb-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(product_id)}`;
   try {
     const response = await axios.get(apiUrl);
