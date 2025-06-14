@@ -43,7 +43,7 @@ import axios from 'axios';
 
 export const getCollaborativeRecommendations = async (req, res, next) => {
     k
-  const { user_id } = req.query;
+  const { user_id } = req.params;
   if (!user_id) {
     return res.status(400).json({ message: "user_id is required" });
   }
