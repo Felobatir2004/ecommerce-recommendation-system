@@ -6,5 +6,5 @@ router.get('/getalldiscountcoupon',coupons.getalldiscoutcoupon)
 router.get('/getsinglediscountcoupon/:id',coupons.getsinglediscountcoupon)
 router.put('/updatediscountcoupon/:id',coupons.updatediscountcoupon)
 router.delete('/deletediscountcoupon/:id',coupons.deletediscountcoupon)
-router.get('/collaborative/:userId', coupons.getCollaborativeRecommendations);
+router.get('/collaborative/:user_id', coupons.getCollaborativeRecommendations);
 export default router
