@@ -87,18 +87,14 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       _id: { $in: user.cart },
     });
 
-    // Extract product names
-    const productNames = userCartProducts.map((product) => product.name).join(",");
+    // Get the first product ID
+    const firstProductId = userCartProducts[0]._id;
 
-    console.log("Product names sent to AI service:", productNames);
+    console.log("Product ID sent to collaborative AI service:", firstProductId);
 
     // Recommendation service URLs
-    const collaborativeUrl = `https://bf06-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(
-      productNames
-    )}`;
-    const hybridUrl = ` https://bf06-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(
-      user_id
-    )}`;
+    const collaborativeUrl = `https://bf06-197-63-194-136.ngrok-free.app/content?product_id=${firstProductId}`;
+    const hybridUrl = `https://bf06-197-63-194-136.ngrok-free.app/hybrid?user_id=${user_id}`;
 
     // Fetch both recommendations in parallel
     const [collaborativeRes, hybridRes] = await Promise.all([
