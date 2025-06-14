@@ -93,10 +93,10 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     console.log("Product names sent to AI service:", productNames);
 
     // Recommendation service URLs
-    const collaborativeUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_name=${encodeURIComponent(
+    const collaborativeUrl = `https://bf06-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(
       productNames
     )}`;
-    const hybridUrl = `https://bf06-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(
+    const hybridUrl = ` https://bf06-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(
       user_id
     )}`;
 
