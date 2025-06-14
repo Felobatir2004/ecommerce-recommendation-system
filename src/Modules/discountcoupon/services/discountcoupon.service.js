@@ -74,30 +74,29 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // 🛒 استخراج IDs من cart و wishlist
+    // استخراج IDs من cart و wishlist
     const cartIds = user.cart.map(item => item._id.toString());
     const wishlistIds = user.withlist.map(item => item._id.toString());
 
-    // 🔁 إرسال cart IDs إلى نظام التوصيات (collaborative)
     const productIds = cartIds.join(",");
     const collaborativeUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(productIds)}`;
     const hybridUrl = `https://488e-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(user_id)}`;
 
-    // ✅ تنفيذ الطلبات بالتوازي
+    // تنفيذ الطلبات بالتوازي
     const [collaborativeRes, hybridRes] = await Promise.all([
       axios.get(collaborativeUrl),
       axios.get(hybridUrl)
     ]);
 
-    // 📌 نتائج التوصيات
-    const collaborativeProducts = collaborativeRes.data || [];
-    const hybridProducts = hybridRes.data || [];
+    // التأكد إن البيانات عبارة عن Array
+    const collaborativeProducts = Array.isArray(collaborativeRes.data) ? collaborativeRes.data : [];
+    const hybridProducts = Array.isArray(hybridRes.data) ? hybridRes.data : [];
 
-    // ❌ استبعاد المنتجات الموجودة بالفعل في cart أو wishlist
+    // استبعاد المنتجات الموجودة بالفعل
     const allExistingIds = new Set([...cartIds, ...wishlistIds]);
 
     const filterOutExisting = (products) =>
-      products.filter(prod => !allExistingIds.has(prod._id));
+      products.filter(prod => prod._id && !allExistingIds.has(prod._id));
 
     const filteredCollaborative = filterOutExisting(collaborativeProducts);
     const filteredHybrid = filterOutExisting(hybridProducts);
