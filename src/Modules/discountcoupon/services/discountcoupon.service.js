@@ -96,7 +96,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     const collaborativeUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_name=${encodeURIComponent(
       productNames
     )}`;
-    const hybridUrl = `https://488e-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(
+    const hybridUrl = `https://bf06-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(
       user_id
     )}`;
 
