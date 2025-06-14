@@ -39,9 +39,7 @@ export const deletereview=async(req,res,next)=>{
         }
     res.json({message:"review deleted successfly",deletereview})
 }     
-<<<<<<< HEAD
- 
-=======
+
 
 export const contactUs=async(req,res,next)=>{
   try{
@@ -55,4 +53,3 @@ export const contactUs=async(req,res,next)=>{
     res.status(500).json({error:error.message})
   }
 }
->>>>>>> bad2a7adb36df5bce35fc5b2ab258d04d5835f1a
