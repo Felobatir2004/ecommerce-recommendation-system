@@ -74,7 +74,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (!Array.isArray(user.cart) || user.cart.length === 0) {
+    if (!user.cart || user.cart.length === 0) {
       return res.status(200).json({
         collaborative: [],
         hybrid: [],
@@ -82,37 +82,46 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       });
     }
 
-    
+    // جلب منتجات المستخدم من قاعدة البيانات
     const userCartProducts = await Product.find({
       _id: { $in: user.cart },
     });
 
-    if (!userCartProducts || userCartProducts.length === 0) {
-      return res.status(200).json({
-        collaborative: [],
-        hybrid: [],
-        message: "No valid products found in cart to generate recommendations.",
-      });
-    }
-
     const firstProductId = userCartProducts[0]._id;
 
-    const baseUrl = process.env.RECOMMENDER_BASE_URL || "https://bf06-197-63-194-136.ngrok-free.app";
-    const collaborativeUrl = `${baseUrl}/content?product_id=${firstProductId}`;
-    const hybridUrl = `${baseUrl}/hybrid?user_id=${user_id}`;
+    const collaborativeUrl = `https://bf06-197-63-194-136.ngrok-free.app/content?product_id=${firstProductId}`;
+    const hybridUrl = `https://bf06-197-63-194-136.ngrok-free.app/hybrid?user_id=${user_id}`;
 
+    // تنفيذ الطلبات بشكل متوازي
     const [collaborativeRes, hybridRes] = await Promise.allSettled([
       axios.get(collaborativeUrl),
       axios.get(hybridUrl),
     ]);
 
+    // استخراج product_id من نتيجة collaborative
+    const collaborativeProductIds =
+      collaborativeRes.status === "fulfilled"
+        ? collaborativeRes.value.data.recommendations.map((p) => p.product_id)
+        : [];
+
+    // جلب المنتجات الموصى بها من قاعدة البيانات بالتفاصيل الكاملة
+    const collaborativeProducts = await Product.find({
+      _id: { $in: collaborativeProductIds },
+    }).select("name brand categories price imageURLs rate");
+
+    // نفس الكلام لل hybrid (اختياري حسب استجابتك)
+    const hybridProductIds =
+      hybridRes.status === "fulfilled"
+        ? hybridRes.value.data.recommendations.map((p) => p.product_id)
+        : [];
+
+    const hybridProducts = await Product.find({
+      _id: { $in: hybridProductIds },
+    }).select("name brand categories price imageURLs rate");
+
     return res.status(200).json({
-      collaborative: collaborativeRes.status === "fulfilled" ? collaborativeRes.value.data : [],
-      hybrid: hybridRes.status === "fulfilled" ? hybridRes.value.data : [],
-      message:
-        collaborativeRes.status === "fulfilled" && hybridRes.status === "fulfilled"
-          ? "Recommendations fetched successfully"
-          : "Fetched with partial results due to an error in one or both services",
+      collaborative: collaborativeProducts,
+      hybrid: hybridProducts,
     });
   } catch (error) {
     console.error("Recommendation error:", error);
