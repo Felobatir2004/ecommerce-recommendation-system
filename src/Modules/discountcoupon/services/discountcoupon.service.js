@@ -74,25 +74,25 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // استخراج IDs من cart و wishlist
-    const cartIds = user.cart.map(item => item._id.toString());
-    const wishlistIds = user.withlist.map(item => item._id.toString());
-
+    // ✅ Use raw IDs
+    const cartIds = user.cart.map(id => id.toString());
+    const wishlistIds = user.withlist.map(id => id.toString());
     const productIds = cartIds.join(",");
+
+    // Build URLs
     const collaborativeUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(productIds)}`;
     const hybridUrl = `https://488e-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(user_id)}`;
 
-    // تنفيذ الطلبات بالتوازي
+    // Fetch from AI API
     const [collaborativeRes, hybridRes] = await Promise.all([
       axios.get(collaborativeUrl),
       axios.get(hybridUrl)
     ]);
 
-    // التأكد إن البيانات عبارة عن Array
     const collaborativeProducts = Array.isArray(collaborativeRes.data) ? collaborativeRes.data : [];
     const hybridProducts = Array.isArray(hybridRes.data) ? hybridRes.data : [];
 
-    // استبعاد المنتجات الموجودة بالفعل
+    // Filter out existing items
     const allExistingIds = new Set([...cartIds, ...wishlistIds]);
 
     const filterOutExisting = (products) =>
