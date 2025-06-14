@@ -1,6 +1,7 @@
 //import { coupon } from "../../../db/model/discountcoupon.model.js";
 import { coupon } from "../../../DB/Models/discountcoupon.model.js"
 import {UserModel} from "../../../DB/Models/user.model.js"
+import {Product} from "../../../DB/Models/product.model.js";
 export const addcoupon=async(req,res,next)=>{
     try{
     let Coupon=new coupon(req.body)
@@ -58,6 +59,8 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
 };
 */
 
+
+
 export const getCollaborativeRecommendations = async (req, res, next) => {
   const { user_id } = req.params;
 
@@ -66,50 +69,52 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
   }
 
   try {
-    const user = await UserModel.findById(user_id)
-      .populate("cart")
-      .populate("withlist");
-
+    const user = await UserModel.findById(user_id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // ✅ Use raw IDs
-    const cartIds = user.cart.map(id => id.toString());
-    const wishlistIds = user.withlist.map(id => id.toString());
-    const productIds = cartIds.join(",");
+    if (!user.cart || user.cart.length === 0) {
+      return res.status(200).json({
+        collaborative: [],
+        hybrid: [],
+        message: "Cart is empty. No recommendations can be generated.",
+      });
+    }
 
-    // Build URLs
-    const collaborativeUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(productIds)}`;
-    const hybridUrl = `https://488e-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(user_id)}`;
-
-    // Fetch from AI API
-    const [collaborativeRes, hybridRes] = await Promise.all([
-      axios.get(collaborativeUrl),
-      axios.get(hybridUrl)
-    ]);
-
-    const collaborativeProducts = Array.isArray(collaborativeRes.data) ? collaborativeRes.data : [];
-    const hybridProducts = Array.isArray(hybridRes.data) ? hybridRes.data : [];
-
-    // Filter out existing items
-    const allExistingIds = new Set([...cartIds, ...wishlistIds]);
-
-    const filterOutExisting = (products) =>
-      products.filter(prod => prod._id && !allExistingIds.has(prod._id));
-
-    const filteredCollaborative = filterOutExisting(collaborativeProducts);
-    const filteredHybrid = filterOutExisting(hybridProducts);
-
-    return res.json({
-      collaborative: filteredCollaborative,
-      hybrid: filteredHybrid
+    // Fetch product details from DB
+    const userCartProducts = await Product.find({
+      _id: { $in: user.cart },
     });
 
+    // Extract product names
+    const productNames = userCartProducts.map((product) => product.name).join(",");
+
+    console.log("Product names sent to AI service:", productNames);
+
+    // Recommendation service URLs
+    const collaborativeUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_name=${encodeURIComponent(
+      productNames
+    )}`;
+    const hybridUrl = `https://488e-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(
+      user_id
+    )}`;
+
+    // Fetch both recommendations in parallel
+    const [collaborativeRes, hybridRes] = await Promise.all([
+      axios.get(collaborativeUrl),
+      axios.get(hybridUrl),
+    ]);
+
+    return res.status(200).json({
+      collaborative: collaborativeRes.data,
+      hybrid: hybridRes.data,
+    });
   } catch (error) {
+    console.error("Recommendation error:", error);
     return res.status(500).json({
       message: "Error fetching recommendations",
-      error: error.message
+      error: error.message,
     });
   }
 };
