@@ -74,7 +74,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (!user.cart || user.cart.length === 0) {
+    if (!Array.isArray(user.cart) || user.cart.length === 0) {
       return res.status(200).json({
         collaborative: [],
         hybrid: [],
@@ -82,29 +82,37 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       });
     }
 
-    // Fetch product details from DB
+    
     const userCartProducts = await Product.find({
       _id: { $in: user.cart },
     });
 
-    // Get the first product ID
+    if (!userCartProducts || userCartProducts.length === 0) {
+      return res.status(200).json({
+        collaborative: [],
+        hybrid: [],
+        message: "No valid products found in cart to generate recommendations.",
+      });
+    }
+
     const firstProductId = userCartProducts[0]._id;
 
-    console.log("Product ID sent to collaborative AI service:", firstProductId);
+    const baseUrl = process.env.RECOMMENDER_BASE_URL || "https://bf06-197-63-194-136.ngrok-free.app";
+    const collaborativeUrl = `${baseUrl}/content?product_id=${firstProductId}`;
+    const hybridUrl = `${baseUrl}/hybrid?user_id=${user_id}`;
 
-    // Recommendation service URLs
-    const collaborativeUrl = `https://bf06-197-63-194-136.ngrok-free.app/content?product_id=${firstProductId}`;
-    const hybridUrl = `https://bf06-197-63-194-136.ngrok-free.app/hybrid?user_id=${user_id}`;
-
-    // Fetch both recommendations in parallel
-    const [collaborativeRes, hybridRes] = await Promise.all([
+    const [collaborativeRes, hybridRes] = await Promise.allSettled([
       axios.get(collaborativeUrl),
       axios.get(hybridUrl),
     ]);
 
     return res.status(200).json({
-      collaborative: collaborativeRes.data,
-      hybrid: hybridRes.data,
+      collaborative: collaborativeRes.status === "fulfilled" ? collaborativeRes.value.data : [],
+      hybrid: hybridRes.status === "fulfilled" ? hybridRes.value.data : [],
+      message:
+        collaborativeRes.status === "fulfilled" && hybridRes.status === "fulfilled"
+          ? "Recommendations fetched successfully"
+          : "Fetched with partial results due to an error in one or both services",
     });
   } catch (error) {
     console.error("Recommendation error:", error);
