@@ -42,11 +42,11 @@ export const deletediscountcoupon=async(req,res,next)=>{
 import axios from 'axios';
 
 export const getCollaborativeRecommendations = async (req, res, next) => {
-  const { user_id } = req.params;
-  if (!user_id) {
+  const { userId } = req.params;
+  if (!userId) {
     return res.status(400).json({ message: "user_id is required" });
   }
-  const apiUrl = `https://e9d1-45-241-47-35.ngrok-free.app/collaborative?user_id=${encodeURIComponent(user_id)}`;
+  const apiUrl = `https://e9d1-45-241-47-35.ngrok-free.app/collaborative?user_id=${encodeURIComponent(userId)}`;
   try {
     const response = await axios.get(apiUrl);
     res.json(response.data);
