@@ -6,3 +6,5 @@ router.patch('/addtowithlist',authentication(),wishlist.addtowithlist)
 router.delete('/removefromwithlist/:id',authentication(),wishlist.removefromwithlist)
 router.get('/getallinwithlist',authentication(),wishlist.getallinwithlist)
 export default router
+
+ 

@@ -12,6 +12,9 @@ import discountcouponcontroller from './Modules/discountcoupon/discountcoupon.co
 import withlistcontroller from './Modules/withlist/withlist.controller.js'
 import cartcontroller from './Modules/cart/cart.controlle.js'
 import ordercontroller from './Modules/cart/cart.controlle.js'
+
+
+
 const bootstrap = async (app, express)=>{
     await connectDB()
     app.use(cors())
@@ -22,6 +25,7 @@ const bootstrap = async (app, express)=>{
     app.get("/",(req,res)=> res.send("Hello world"))
     app.use("/auth",authRouter)
     app.use("/user",userRouter)
+  // app.use('/recommendation', recommendationRouter)
     app.use('/category',categorycontroller)
     app.use('/product',productcontroller)
     app.use('/review',reviewcontroller)
