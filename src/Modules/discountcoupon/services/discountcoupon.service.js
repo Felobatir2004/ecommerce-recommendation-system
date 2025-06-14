@@ -58,8 +58,8 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
 };
 */
 
-export const getCollaborativeRecommendations = async (req, res, next) => {
-  const { user_id } = req.params;
+export const getRecommendations = async (req, res, next) => {
+  const { user_id, type = 'collaborative' } = req.params; // 'type' defaults to 'collaborative'
   if (!user_id) {
     return res.status(400).json({ message: "user_id is required" });
   }
@@ -69,12 +69,17 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
   }
 
   const product_id = user.cart.map((item) => item.product_id).join(",");
-  const apiUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(product_id)}`;
-  try {
+  let apiUrl;
+  if (type === 'collaborative') {
+    apiUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(product_id)}`;
+  } else if (type === 'hybrid') {
+    apiUrl = `https://488e-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(user_id)}&product_id=${encodeURIComponent(product_id)}`;
+  } else {
+    return res.status(400).json({ message: "Invalid type. Use 'collaborative' or 'hybrid'" });
+  }
+
     const response = await axios.get(apiUrl);
     res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching recommendations", error: error.message });
-  }
+
 };
 
