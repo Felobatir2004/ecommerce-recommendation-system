@@ -61,6 +61,10 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
 
 
 
+const shuffleArray = (array) => {
+  return array.sort(() => Math.random() - 0.5);
+};
+
 export const getCollaborativeRecommendations = async (req, res, next) => {
   const { user_id } = req.params;
 
@@ -82,42 +86,47 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       });
     }
 
-    // جلب منتجات المستخدم من قاعدة البيانات
-    const userCartProducts = await Product.find({
-      _id: { $in: user.cart },
-    });
+    // Fetch product details in the cart
+    const userCartProducts = await Product.find({ _id: { $in: user.cart } });
 
-    const firstProductId = userCartProducts[0]._id;
+    // Pick a random product from the cart
+    const randomProduct =
+      userCartProducts[Math.floor(Math.random() * userCartProducts.length)];
+    const randomProductId = randomProduct._id;
 
-    const collaborativeUrl = `https://bf06-197-63-194-136.ngrok-free.app/content?product_id=${firstProductId}`;
+    // Build recommendation URLs
+    const collaborativeUrl = `https://bf06-197-63-194-136.ngrok-free.app/content?product_id=${randomProductId}`;
     const hybridUrl = `https://bf06-197-63-194-136.ngrok-free.app/hybrid?user_id=${user_id}`;
 
-    // تنفيذ الطلبات بشكل متوازي
+    // Get recommendations
     const [collaborativeRes, hybridRes] = await Promise.allSettled([
       axios.get(collaborativeUrl),
       axios.get(hybridUrl),
     ]);
 
-    // استخراج product_id من نتيجة collaborative
+    // Extract IDs from both responses
     const collaborativeProductIds =
       collaborativeRes.status === "fulfilled"
         ? collaborativeRes.value.data.recommendations.map((p) => p.product_id)
         : [];
 
-    // جلب المنتجات الموصى بها من قاعدة البيانات بالتفاصيل الكاملة
-    const collaborativeProducts = await Product.find({
-      _id: { $in: collaborativeProductIds },
-    }).select("name brand categories price imageURLs rate");
-
-    // نفس الكلام لل hybrid (اختياري حسب استجابتك)
     const hybridProductIds =
       hybridRes.status === "fulfilled"
         ? hybridRes.value.data.recommendations.map((p) => p.product_id)
         : [];
 
-    const hybridProducts = await Product.find({
-      _id: { $in: hybridProductIds },
-    }).select("name brand categories price imageURLs rate");
+    // Fetch product details from DB and shuffle
+    const collaborativeProducts = shuffleArray(
+      await Product.find({ _id: { $in: collaborativeProductIds } }).select(
+        "name brand categories price imageURLs rate"
+      )
+    );
+
+    const hybridProducts = shuffleArray(
+      await Product.find({ _id: { $in: hybridProductIds } }).select(
+        "name brand categories price imageURLs rate"
+      )
+    );
 
     return res.status(200).json({
       collaborative: collaborativeProducts,
