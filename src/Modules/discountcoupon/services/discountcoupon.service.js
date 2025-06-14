@@ -42,6 +42,7 @@ export const deletediscountcoupon=async(req,res,next)=>{
 // filepath: c:\Users\eng abdo essam\OneDrive\سطح المكتب\graduation ecommerce (4)\graduation ecommerce\ecommerce-recommendation-system\src\Modules\discountcoupon\services\discountcoupon.service.js
 import axios from 'axios';
 
+/*
 export const getCollaborativeRecommendations = async (req, res, next) => {
   const { user_id } = req.params;
   if (!user_id) {
@@ -55,8 +56,8 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     res.status(500).json({ message: "Error fetching recommendations", error: error.message });
   }
 };
+*/
 
-/*
 export const getCollaborativeRecommendations = async (req, res, next) => {
   const { user_id } = req.params;
   if (!user_id) {
@@ -68,7 +69,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
   }
 
   const product_id = user.cart.map((item) => item.product_id).join(",");
-  const apiUrl = `https://ec95-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(product_id)}`;
+  const apiUrl = `https://488e-197-63-194-136.ngrok-free.app/content?product_id=${encodeURIComponent(product_id)}`;
   try {
     const response = await axios.get(apiUrl);
     res.json(response.data);
@@ -76,4 +77,4 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     res.status(500).json({ message: "Error fetching recommendations", error: error.message });
   }
 };
-*/
+
