@@ -1,11 +1,14 @@
 import { Router } from "express";
-import { allowTo, authentication } from "../../middlewares/auth.middleware.js";
+import { authentication } from "../../middlewares/auth.middleware.js";
 import * as cart from './services/cart.service.js'
 const router=Router()
-router.post('/addtocart',authentication(),cart.addProductToCart)
-router.delete('/deletefromcart/:id',authentication(),cart.removeProductFromCart)
+router.post('/addtocart/:userId',cart.addProductToCart)
+router.delete('/deletefromcart/:userId',cart.removeProductFromCart)
 router.delete('/deleteAllinCart',authentication(),cart.clearUserCart)
-router.get('/getusercart',authentication(),cart.getUserCart)
+router.get('/getusercart/:userId',cart.getUserCart)
 router.get('/getallsimilarproducts',authentication(),cart.getSimilarProductsFromCart)
-router.patch("/checkout",authentication(),cart.checkout)
+router.patch("/checkout/:userId",cart.checkoutAndCreateOrder)
+router.patch('/increaseQuantity/:userId',cart.increaseCartItemQuantity)
+router.patch('/decreaseQuantity/:userId',cart.decreaseCartItemQuantity)
+router.patch("/makeOrder/:userId",cart.addOrder)
 export default router

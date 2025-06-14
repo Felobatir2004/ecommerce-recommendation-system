@@ -1,13 +1,5 @@
 import { Order } from "../../../DB/Models/order.model.js";
-export const addOrder = async (req, res, next) => {
-  try {
-    let order = new Order(req.body);
-    await order.save();
-    res.status(201).json({ message: "Order created", order });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+
 export const getOrder = async (req, res, next) => {
   try {
     let order = await Order.findById(req.params.id).populate("user").populate("orderItems.product");
@@ -82,4 +74,41 @@ export const markAsDelivered = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+
+export const addOrder = async (req, res, next) => {
+  const { userId } = req.params;
+  const {orderId,paymenttype}= req.body;
+  if (paymenttype === "cash") {
+      const order = await Order.findByIdAndUpdate(
+    orderId,
+    { user: userId,
+      name:req.body.name,
+      email:req.body.email,
+      address:req.body.address,
+     },
+    { new: true }
+  );
+  }
+  else if (paymenttype === "visa") {
+      const order = await Order.findByIdAndUpdate(
+    orderId,
+    { user: userId,
+      name:req.body.name,
+      email:req.body.email,
+      phoneNumber:req.body.phoneNumber,
+      address:req.body.address,
+      cardNumber:req.body.cardNumber,
+      cvv:req.body.cvv,
+      expiryDate:req.body.expiryDate,
+     },
+    { new: true }
+  );
+  }
+
+  if (!order) {
+    return res.status(404).json({ message: "Order not found" });
+  }
+  res.json({ message: "order make successfly", order });
 };

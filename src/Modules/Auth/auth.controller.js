@@ -5,13 +5,17 @@ import { validation } from "../../middlewares/validation.middleware.js";
 import { asyncHandler } from "../../utils/error handling/asyncHandler.js";
 
 const router = Router()
-
+/*
 router.post(
     "/register",
     validation(authValidation.registerSchema),
     asyncHandler(authService.register)
 )
-
+*/
+router.post(
+    "/register",
+    asyncHandler(authService.signUp)
+)
 router.patch(
     "/verifyEmail",
     validation(authValidation.confirmEmailSchema),
@@ -22,6 +26,13 @@ router.post(
     validation(authValidation.signInSchema),
     asyncHandler(authService.login)
 )
+
+// routes/auth.routes.js
+router.post(
+  "/auth0-login",
+  asyncHandler(authService.auth0Login)
+)
+
 router.patch(
     "/forget_password",
     validation(authValidation.forgetPasswordSchema),
@@ -33,5 +44,7 @@ router.patch(
     validation(authValidation.resetPasswordSchema),
     asyncHandler(authService.reset_password)
 )
+
+router.post("/auth0/callback", asyncHandler(authService.auth0_callback));
 
 export default router

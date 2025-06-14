@@ -9,25 +9,18 @@ const schema=new mongoose.Schema({
     }
   ],
   totalorderprice:Number,
-  shippingaddress:{
-    city:String,
-    street:String,
-    phone:String
-  },
-  paymenttype:{
+  Name:String,
+  Email:String,
+  Phone:String,
+  Address:String,
+  card:String,
+  cvv:String,
+  expiry:String,
+  paymentMethod:{
     type:String,
-    enum:['cash','card'],
+    enum:['cash','visa'],
     default:'cash'
   },
-  ispaid:{
-    type:Boolean,
-    default:false
-  },
-  isdeliverd:{
-    type:Boolean,
-    default:false
-  },
-  deliverdat:Date
 }, {timestamps:true});
 
 export const Order = mongoose.model("Order", schema);

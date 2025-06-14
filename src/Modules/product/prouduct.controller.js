@@ -7,9 +7,6 @@ import { asyncHandler } from "../../utils/error handling/asyncHandler.js";
 const router=Router()
 router.post(
     '/addproduct',
-    authentication(),
-    allowTo('Admin'),
-    uploadCloud().single('image'),
     asyncHandler(products.addproduct)
 )
 router.get(
@@ -33,8 +30,6 @@ router.get(
 )
 router.delete(
     '/deleteproduct',
-    //allowTo('Admin'),
-    //authentication(),
     asyncHandler(products.deleteproduct)
 )
 router.put(

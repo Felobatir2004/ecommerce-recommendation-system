@@ -15,10 +15,7 @@ export const generalField = {
     
         }),
         password: joi
-        .string()
-        .pattern(
-            new RegExp(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\w)(?!.* ).{8,16}$/)
-        ),
+        .string(),
         confirmPassword: joi.string().valid(joi.ref("password")).required(),
         gender: joi.string().valid("male","female"),
         role: joi.string().valid("User","Admin"),

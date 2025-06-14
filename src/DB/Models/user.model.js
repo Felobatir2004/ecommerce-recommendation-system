@@ -38,7 +38,6 @@ const userSchema = new Schema({
    gender:{
     type:String,
     enum:Object.values(genderType),
-    default:genderType.male
    },
   mobileNumber:String,
   role:{
@@ -59,7 +58,7 @@ const userSchema = new Schema({
     type:Types.ObjectId,
     ref:"User"
   },
-  OTP: [
+ /* OTP: [
     {
       OTPtype: {
         type: String,
@@ -70,6 +69,7 @@ const userSchema = new Schema({
 
     },
   ],
+  */
 withlist:[{type:Types.ObjectId,ref:'Product'}],
 cart:[{type:Types.ObjectId,ref:'Product'}]
 

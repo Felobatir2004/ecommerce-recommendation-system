@@ -15,7 +15,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+<<<<<<< HEAD
     "@tensorflow/tfjs": "^4.22.0",
+=======
+>>>>>>> bad2a7adb36df5bce35fc5b2ab258d04d5835f1a
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.6.1",
@@ -30,6 +33,7 @@
     "nanoid": "^5.1.5",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.10.0",
-    "streamifier": "^0.1.1"
+    "streamifier": "^0.1.1",
+    "xlsx": "^0.18.5"
   }
 }

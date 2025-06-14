@@ -8,53 +8,35 @@ import { roleType } from "../../../DB/Models/user.model.js";
 import * as dbService from "../../../DB/dbService.js"
 import categorymodel from "../../../DB/Models/category.model.js";
 
+
 export const addproduct = async (req, res, next) => {
-    const { name , price , stock , categoryName} = req.body;
-    
-    const user = await dbService.findOne({
-        model: UserModel,
-        filter: { _id: req.user._id },
-    });  
+    const { brand, Images, name, price, rate, categories } = req.body;
 
-    if (!user) {
-        return res.status(404).json({ message: "User not found" });
+    if (!brand || !Images || !name || !price || !categories) {
+      return res.status(400).json({ error: "All required fields must be filled." });
     }
 
-    if (user.role !== roleType.Admin) {
-        return res.status(401).json({ message: "You are not authorized to add product" });
-    }
-    if (!req.file) {
-        return res.status(400).json({ 
-                success: false, 
-                message: "Please upload an image file (JPEG, JPG, PNG)" 
-            });
-        }
-    let customId = nanoid(5)
+    let category = await categorymodel.findOne({ name: categories });
 
-    const {secure_url , public_id} = await cloudinary.uploader.upload(req.file.path,{
-        folder: `product/${customId}/${name}`,
-    })
-    const checkCategory= await dbService.findOne({
-        model: categorymodel,
-        filter: { name: categoryName },
-    })
-    if(!checkCategory) return next(new Error("Category not found",{cause: 404}))
+    if (!category) return res.status(404).json({ message: "Category not found" });
+    const product = new Product({
+      brand,
+      imageURLs: [Images],
+      name,
+      price,
+      rate: rate || 0,
+      categories: category.name,
+    });
 
-    const product = await Product.create({
-        name,
-        price,
-        stock,
-        Images: {
-            secure_url,
-            public_id
-        },
-        category:categoryName,
-        createdBy: req.user._id,
+    await product.save();
 
-    });    
+    return res.status(201).json({
+      message: "Product added successfully",
+      product,
+    });
 
-    res.status(201).json({ message: "Product created successfully" , product });
-}
+};
+
 export const getproductById=async(req,res,next)=>{
     const product =await Product.findById(req.params.id)
     if(!product)
@@ -100,13 +82,12 @@ export const getproductsbycategory = async (req, res, next) => {
             return next(new Error("Category not found", { cause: 404 }));
         }
 
-        let products = await Product.find({ categories: category }).limit(100);
+        let products = await Product.find({ categories: category });
 
         if (!products || products.length === 0) {
             return res.status(404).json({ message: "product not found" });
         }
 
-        // تعديل imageURLs لو كانت String
         products = products.map(product => {
             const productObj = product.toObject();
             if (typeof productObj.imageURLs === 'string') {
@@ -123,18 +104,18 @@ export const getproductsbycategory = async (req, res, next) => {
 
 
 export const getallproduct=async(req,res,next)=>{
-    let products =await Product.find().limit(100)
+    let products =await Product.find()
     if(!products)
     {
         res.status(404).json({message:"product not found"})
     }
-        products = products.map(product => {
+    /*    products = products.map(product => {
       const productObj = product.toObject();
       if (typeof productObj.imageURLs === 'string') {
         productObj.imageURLs = productObj.imageURLs.split(',').map(url => url.trim());
       }
       return productObj;
-    });
+    });*/
     res.json({message:"product gets successfly",products})
 }
 /*
@@ -146,15 +127,29 @@ export const getallproduct=async(req,res,next)=>{
     res.json({message:"product gets successfly",products})
 }
     */
-export const deleteproduct=async(req,res,next)=>{
-    const {product_id}=req.body
-    let product=await Product.findByIdAndDelete(product_id)
-    if(!product)
-    {
-        res.status(404).json({message:"product not found"})
+export const deleteproduct = async (req, res, next) => {
+    const { name, price } = req.body;
+
+    try {
+        const filter = {
+            name: { $regex: name, $options: "i" },
+            price: price
+        };
+
+        // Delete the first matched product
+        const product = await Product.findOneAndDelete(filter);
+
+        if (!product) {
+            return res.status(404).json({ message: "product not found" });
+        }
+
+        res.json({ message: "product deleted", product });
+    } catch (error) {
+        res.status(500).json({ message: "server error", error: error.message });
     }
-   res.json({message:"product deleted",product})
-}
+};
+
+
 export const updateproduct=async(req,res,next)=>{
     let product =await Product.findByIdAndUpdate(req.params.id,req.body,{new:true})
     if(!product)

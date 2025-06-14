@@ -16,7 +16,7 @@ export const sendEmails = async ({ to, subject, html }) => {
     });
 
     const info = await transporter.sendMail({
-        from: `"Canadian Ecommerce recommendation system website" <${process.env.EMAIL}>`,
+        from: `"Shopop website" <${process.env.EMAIL}>`,
         to,
         subject,
         html,

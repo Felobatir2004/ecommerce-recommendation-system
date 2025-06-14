@@ -1,11 +1,13 @@
 import { OTPType, roleType, UserModel } from "../../DB/Models/user.model.js";
 import * as dbService from "../../DB/dbService.js"
-import { emailEmitter, otp } from "../../utils/email/email.event.js"
+import { emailEmitter } from "../../utils/email/email.event.js"
 import { compareHash, hash } from "../../utils/hashing/hash.js";
 import { generateToken } from "../../utils/token/token.js"
-
+import axios from "axios";
+import jwt from "jsonwebtoken"
+/*
 export const register = async  (req,res,next)=>{
-    const {userName , email , password ,mobileNumber}= req.body
+    const {userName , email , password }= req.body
 
     const user = await dbService.findOne({model: UserModel , filter: {email}})
     if(user) return next (new Error("User already exists",{cause: 409}))
@@ -16,7 +18,6 @@ export const register = async  (req,res,next)=>{
         userName , 
         email , 
         password,
-        mobileNumber,
         OTP:[{
             OTPtype:OTPType.confirmEmail,
             code:hash({plainText:otp}),
@@ -28,7 +29,8 @@ export const register = async  (req,res,next)=>{
     emailEmitter.emit("sendEmail",email,newUser.userName,newUser._id)
     return res.status(200).json({success:true , message :"user Registered successfully", newUser})
 }
-
+*/
+/*
 export const verifyEmail = async (req, res, next) => {
         const { code, email } = req.body;
 
@@ -66,19 +68,75 @@ export const verifyEmail = async (req, res, next) => {
 
         return res.status(200).json({ success: true, message: "Email verified successfully" });
 };
+*/
+
+export const signUp = async (req, res, next) => {
+  try {
+    const { userName, email, password , mobileNumber } = req.body;
+
+    const existingUser = await dbService.findOne({ model: UserModel, filter: { email } });
+    if (existingUser) {
+      const error = new Error("User already exists");
+      error.status = 409;
+      return next(error);
+    }
+
+    const newUser = await dbService.create({
+      model: UserModel,
+      data: {
+        userName,
+        email,
+        password,
+        mobileNumber,
+        isVerified: true, 
+      },
+    });
+
+
+emailEmitter.emit("sendWelcomeEmail", email, newUser.userName);
+
+
+    const access_token = generateToken({
+      payload: { id: newUser._id },
+      signature: process.env.USER_ACCESS_TOKEN,
+      options: { expiresIn: process.env.ACCESS_TOKEN_EXPIRESS },
+    });
+
+    const refresh_token = generateToken({
+      payload: { id: newUser._id },
+      signature: process.env.USER_ACCESS_TOKEN,
+      options: { expiresIn: process.env.REFRESH_TOKEN_EXPIRESS },
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "User registered successfully and logged in",
+      tokens: {
+        access_token,
+        refresh_token,
+        roleId: 2, 
+      },
+      user: {
+        id: newUser._id,
+        userName: newUser.userName,
+        email: newUser.email,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export const login = async (req,res,next)=>{
     const {email , password} =req.body;
-
     const user =await dbService.findOne({model:UserModel , filter: {email}})
     if(!user) return next(new Error("user not found",{cause: 404}))
-    
     if(!user.isVerified)
         return next (new Error("email not verified",{cause: 401}))
     
     if(!compareHash({plainText: password, hash: user.password}))
         return next (new Error("invalid password",{cause: 400}))
-
     const access_token = generateToken({
         payload:{id:user._id},
         signature: user.role === roleType.User
@@ -86,7 +144,6 @@ export const login = async (req,res,next)=>{
           : process.env.ADMIN_ACCESS_TOKEN,
         options:{expiresIn: process.env.ACCESS_TOKEN_EXPIRESS}
     })
-
     const refresh_token = generateToken({
         payload:{id:user._id},
         signature: user.role === roleType.User
@@ -106,13 +163,20 @@ export const login = async (req,res,next)=>{
     }
     return res.status(200).json({
         success: true,
-         tokens: {
+        tokens: {
             access_token,
             refresh_token,
             roleId
-         }
+    },
+        user: {
+            id: user._id,
+            userName: user.userName,
+            email: user.email,
+        },
     })
 }
+
+
 
 export const forget_password = async (req,res,next)=>{
 
