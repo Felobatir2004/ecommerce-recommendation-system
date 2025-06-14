@@ -106,3 +106,29 @@ export const getAllInWishlist = async (req, res, next) => {
 };
 
 
+<<<<<<< HEAD
+    export const removefromwithlist=async(req,res,next)=>{
+        let withlist= await UserModel.findByIdAndUpdate(req.user._id,
+            {$pull:{withlist:req.params.id}},{new:true})
+            if(!withlist)
+                {
+                    res.json({message:"withlist not found"})
+                }
+                res.json({message:"withlist",withlist})
+            }
+            export const getallinwithlist=async(req,res,next)=>{
+                let withlist= await UserModel.findById(req.user._id)
+                    if(!withlist)
+                        {
+                            res.json({message:"withlist not found"})
+                        }
+                        res.json({message:"withlist",withlist})
+                    }
+                    import { Router } from "express";
+
+const router = Router();
+
+// If using Node.js <18, install node-fetch and use: import fetch from 'node-fetch';
+
+=======
+>>>>>>> bad2a7adb36df5bce35fc5b2ab258d04d5835f1a

@@ -38,3 +38,19 @@ export const deletediscountcoupon=async(req,res,next)=>{
     }
     res.json({message:"the coupon is deleted"})
 }
+// filepath: c:\Users\eng abdo essam\OneDrive\سطح المكتب\graduation ecommerce (4)\graduation ecommerce\ecommerce-recommendation-system\src\Modules\discountcoupon\services\discountcoupon.service.js
+import axios from 'axios';
+
+export const getCollaborativeRecommendations = async (req, res, next) => {
+  const { user_id } = req.query;
+  if (!user_id) {
+    return res.status(400).json({ message: "user_id is required" });
+  }
+  const apiUrl = `https://e9d1-45-241-47-35.ngrok-free.app/collaborative?user_id=${encodeURIComponent(user_id)}`;
+  try {
+    const response = await axios.get(apiUrl);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching recommendations", error: error.message });
+  }
+};
