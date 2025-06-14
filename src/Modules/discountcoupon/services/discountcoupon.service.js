@@ -40,8 +40,22 @@ export const deletediscountcoupon=async(req,res,next)=>{
 }
 // filepath: c:\Users\eng abdo essam\OneDrive\سطح المكتب\graduation ecommerce (4)\graduation ecommerce\ecommerce-recommendation-system\src\Modules\discountcoupon\services\discountcoupon.service.js
 import axios from 'axios';
-import { UserModel } from "../../../DB/Models/user.model.js"
 
+export const getCollaborativeRecommendations = async (req, res, next) => {
+  const { user_id } = req.params;
+  if (!user_id) {
+    return res.status(400).json({ message: "user_id is required" });
+  }
+  const apiUrl = `https://b9f7-197-63-194-136.ngrok-free.app/hybrid?user_id=${encodeURIComponent(user_id)}`;
+  try {
+    const response = await axios.get(apiUrl);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching recommendations", error: error.message });
+  }
+};
+
+/*
 export const getCollaborativeRecommendations = async (req, res, next) => {
   const { user_id } = req.params;
   if (!user_id) {
@@ -61,3 +75,4 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     res.status(500).json({ message: "Error fetching recommendations", error: error.message });
   }
 };
+*/
