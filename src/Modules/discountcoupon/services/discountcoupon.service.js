@@ -42,6 +42,7 @@ export const deletediscountcoupon=async(req,res,next)=>{
 import axios from 'axios';
 
 export const getCollaborativeRecommendations = async (req, res, next) => {
+    k
   const { user_id } = req.query;
   if (!user_id) {
     return res.status(400).json({ message: "user_id is required" });
