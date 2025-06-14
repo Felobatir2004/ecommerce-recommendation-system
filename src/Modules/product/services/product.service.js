@@ -103,21 +103,27 @@ export const getproductsbycategory = async (req, res, next) => {
 
 
 
-export const getallproduct=async(req,res,next)=>{
-    let products =await Product.find()
-    if(!products)
-    {
-        res.status(404).json({message:"product not found"})
+export const getallproduct = async (req, res, next) => {
+  try {
+    let products = await Product.find();
+
+    if (!products || products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
     }
-    /*    products = products.map(product => {
-      const productObj = product.toObject();
-      if (typeof productObj.imageURLs === 'string') {
-        productObj.imageURLs = productObj.imageURLs.split(',').map(url => url.trim());
-      }
-      return productObj;
-    });*/
-    res.json({message:"product gets successfly",products})
-}
+
+    // Shuffle the array randomly
+    products = products.sort(() => Math.random() - 0.5);
+
+    // Optional: Limit to N products (e.g., 10)
+    // products = products.slice(0, 10);
+
+    res.json({ message: "Products fetched successfully", products });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 /*
 export const getallproduct=async(req,res,next)=>{
     const page =req.query.page *1||1;
