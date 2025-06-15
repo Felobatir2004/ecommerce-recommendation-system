@@ -58,18 +58,7 @@ const userSchema = new Schema({
     type:Types.ObjectId,
     ref:"User"
   },
- /* OTP: [
-    {
-      OTPtype: {
-        type: String,
-        enum: Object.values(OTPType),
-      },
-      code: String,
-      expiresIn: Date,
 
-    },
-  ],
-  */
 withlist:[{type:Types.ObjectId,ref:'Product'}],
 cart:[{type:Types.ObjectId,ref:'Product'}]
 
