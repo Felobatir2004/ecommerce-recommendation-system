@@ -145,8 +145,7 @@ export const removeProductFromCart = async (req, res) => {
 
 export const getSimilarProductsFromCart = async (req, res) => {
   try {
-    const userId = req.user._id;
-
+    const {userId} = req.params
     // Step 1: Get user and populate cart items
     const user = await UserModel.findById(userId).populate("cart");
 
