@@ -21,10 +21,9 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // لو الكارت فاضي، رجّع منتجات عشوائية بدلاً من رسالة
     if (!user.cart || user.cart.length === 0) {
       const randomProducts = await Product.aggregate([
-        { $sample: { size: 30 } }, // اختار 10 منتجات عشوائيًا
+        { $sample: { size: 30 } }, 
         {
           $project: {
             name: 1,
