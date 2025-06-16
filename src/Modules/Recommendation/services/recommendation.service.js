@@ -24,11 +24,27 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
 
     const cartProductIds = user.cart || [];
 
+    // في حالة الكارت فاضي، رجّع منتجات عشوائية
     if (cartProductIds.length === 0) {
+      const randomProducts = await Product.aggregate([
+        { $sample: { size: 10 } }, // اختار 10 منتجات عشوائيًا
+        {
+          $project: {
+            name: 1,
+            brand: 1,
+            categories: 1,
+            price: 1,
+            imageURLs: 1,
+            rate: 1,
+          },
+        },
+      ]);
+
       return res.status(200).json({
         collaborative: [],
         hybrid: [],
-        message: "Cart is empty. No recommendations can be generated.",
+        random: randomProducts,
+        message: "No cart found. Showing random products instead.",
       });
     }
 
@@ -36,10 +52,25 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     const cartProducts = await Product.find({ _id: { $in: cartProductIds } });
 
     if (!cartProducts.length) {
+      const randomProducts = await Product.aggregate([
+        { $sample: { size: 10 } },
+        {
+          $project: {
+            name: 1,
+            brand: 1,
+            categories: 1,
+            price: 1,
+            imageURLs: 1,
+            rate: 1,
+          },
+        },
+      ]);
+
       return res.status(200).json({
         collaborative: [],
         hybrid: [],
-        message: "No valid products found in cart.",
+        random: randomProducts,
+        message: "No valid products in cart. Showing random instead.",
       });
     }
 
@@ -59,7 +90,6 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       axios.get(hybridUrl),
     ]);
 
-    // Extract product IDs safely
     const collaborativeProductIds =
       collabResult.status === "fulfilled"
         ? (collabResult.value?.data?.recommendations || []).map(
