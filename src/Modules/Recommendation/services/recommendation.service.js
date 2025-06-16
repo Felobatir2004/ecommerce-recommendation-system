@@ -21,11 +21,27 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // لو الكارت فاضي، رجّع منتجات عشوائية بدلاً من رسالة
     if (!user.cart || user.cart.length === 0) {
+      const randomProducts = await Product.aggregate([
+        { $sample: { size: 10 } }, // اختار 10 منتجات عشوائيًا
+        {
+          $project: {
+            name: 1,
+            brand: 1,
+            categories: 1,
+            price: 1,
+            imageURLs: 1,
+            rate: 1,
+          },
+        },
+      ]);
+
       return res.status(200).json({
         collaborative: [],
         hybrid: [],
-        message: "Cart is empty. No recommendations can be generated.",
+        random: randomProducts,
+        message: "No cart found. Showing random products instead.",
       });
     }
 
@@ -38,8 +54,8 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     const randomProductId = randomProduct._id;
 
     // Build recommendation URLs
-    const collaborativeUrl = ` https://6763-156-214-225-84.ngrok-free.app/content?product_id=${randomProductId}`;
-    const hybridUrl = ` https://6763-156-214-225-84.ngrok-free.app/hybrid?user_id=${user_id}`;
+    const collaborativeUrl = `https://6763-156-214-225-84.ngrok-free.app/content?product_id=${randomProductId}`;
+    const hybridUrl = `https://6763-156-214-225-84.ngrok-free.app/hybrid?user_id=${user_id}`;
 
     // Get recommendations
     const [collaborativeRes, hybridRes] = await Promise.allSettled([
