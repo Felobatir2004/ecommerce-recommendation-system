@@ -29,7 +29,7 @@ const bootstrap = async (app, express)=>{
     app.use('/product',productcontroller)
     app.use('/review',reviewcontroller)
     app.use('/recommendation',recommendationController)
-    app.use('/withlist',withlistcontroller)
+    app.use('/wishlist',withlistcontroller)
     app.use('/cart',cartcontroller)
     app.use('/order',ordercontroller)
     app.all("*",notFoundHandler)
