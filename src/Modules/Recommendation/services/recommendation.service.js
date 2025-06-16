@@ -53,8 +53,8 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     const randomProductId = randomProduct._id;
 
     // Build recommendation URLs
-    const collaborativeUrl = ` https://eb43-156-214-225-84.ngrok-free.app/content?product_id=${randomProductId}`;
-    const hybridUrl = ` https://eb43-156-214-225-84.ngrok-free.app/hybrid?user_id=${user_id}`;
+    const collaborativeUrl = `https://ac6a-154-178-148-59.ngrok-free.app/content?product_id=${randomProductId}`;
+    const hybridUrl = ` https://ac6a-154-178-148-59.ngrok-free.app/hybrid?user_id=${user_id}`;
 
     // Get recommendations
     const [collaborativeRes, hybridRes] = await Promise.allSettled([
