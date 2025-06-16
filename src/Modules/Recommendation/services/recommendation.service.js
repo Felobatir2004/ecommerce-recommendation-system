@@ -24,7 +24,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     // لو الكارت فاضي، رجّع منتجات عشوائية بدلاً من رسالة
     if (!user.cart || user.cart.length === 0) {
       const randomProducts = await Product.aggregate([
-        { $sample: { size: 10 } }, // اختار 10 منتجات عشوائيًا
+        { $sample: { size: 30 } }, // اختار 10 منتجات عشوائيًا
         {
           $project: {
             name: 1,
