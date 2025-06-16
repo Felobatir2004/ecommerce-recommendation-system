@@ -16,79 +16,77 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
   }
 
   try {
+    // Get user and check if cart exists
     const user = await UserModel.findById(user_id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (!user.cart || user.cart.length === 0) {
-      const randomProducts = await Product.aggregate([
-        { $sample: { size: 30 } }, 
-        {
-          $project: {
-            name: 1,
-            brand: 1,
-            categories: 1,
-            price: 1,
-            imageURLs: 1,
-            rate: 1,
-          },
-        },
-      ]);
+    const cartProductIds = user.cart || [];
 
+    if (cartProductIds.length === 0) {
       return res.status(200).json({
         collaborative: [],
         hybrid: [],
-        random: randomProducts,
-        message: "No cart found. Showing random products instead.",
+        message: "Cart is empty. No recommendations can be generated.",
       });
     }
 
-    // Fetch product details in the cart
-    const userCartProducts = await Product.find({ _id: { $in: user.cart } });
+    // Get product details in the cart
+    const cartProducts = await Product.find({ _id: { $in: cartProductIds } });
+
+    if (!cartProducts.length) {
+      return res.status(200).json({
+        collaborative: [],
+        hybrid: [],
+        message: "No valid products found in cart.",
+      });
+    }
 
     // Pick a random product from the cart
     const randomProduct =
-      userCartProducts[Math.floor(Math.random() * userCartProducts.length)];
+      cartProducts[Math.floor(Math.random() * cartProducts.length)];
     const randomProductId = randomProduct._id;
 
-    // Build recommendation URLs
-    const collaborativeUrl = `https://ac6a-154-178-148-59.ngrok-free.app/content?product_id=${randomProductId}`;
-    const hybridUrl = ` https://ac6a-154-178-148-59.ngrok-free.app/hybrid?user_id=${user_id}`;
+    // Recommendation service URLs
+    const RECOMMENDATION_BASE_URL = "https://ac6a-154-178-148-59.ngrok-free.app";
+    const collaborativeUrl = `${RECOMMENDATION_BASE_URL}/content?product_id=${randomProductId}`;
+    const hybridUrl = `${RECOMMENDATION_BASE_URL}/hybrid?user_id=${user_id}`;
 
-    // Get recommendations
-    const [collaborativeRes, hybridRes] = await Promise.allSettled([
+    // Call external services in parallel
+    const [collabResult, hybridResult] = await Promise.allSettled([
       axios.get(collaborativeUrl),
       axios.get(hybridUrl),
     ]);
 
-    // Extract IDs from both responses
+    // Extract product IDs safely
     const collaborativeProductIds =
-      collaborativeRes.status === "fulfilled"
-        ? collaborativeRes.value.data.recommendations.map((p) => p.product_id)
+      collabResult.status === "fulfilled"
+        ? (collabResult.value?.data?.recommendations || []).map(
+            (p) => p.product_id
+          )
         : [];
 
     const hybridProductIds =
-      hybridRes.status === "fulfilled"
-        ? hybridRes.value.data.recommendations.map((p) => p.product_id)
+      hybridResult.status === "fulfilled"
+        ? (hybridResult.value?.data?.recommendations || []).map(
+            (p) => p.product_id
+          )
         : [];
 
-    // Fetch product details from DB and shuffle
-    const collaborativeProducts = shuffleArray(
-      await Product.find({ _id: { $in: collaborativeProductIds } }).select(
+    // Fetch actual products from DB and shuffle
+    const [collaborativeProducts, hybridProducts] = await Promise.all([
+      Product.find({ _id: { $in: collaborativeProductIds } }).select(
         "name brand categories price imageURLs rate"
-      )
-    );
-
-    const hybridProducts = shuffleArray(
-      await Product.find({ _id: { $in: hybridProductIds } }).select(
+      ),
+      Product.find({ _id: { $in: hybridProductIds } }).select(
         "name brand categories price imageURLs rate"
-      )
-    );
+      ),
+    ]);
 
     return res.status(200).json({
-      collaborative: collaborativeProducts,
-      hybrid: hybridProducts,
+      collaborative: shuffleArray(collaborativeProducts),
+      hybrid: shuffleArray(hybridProducts),
     });
   } catch (error) {
     console.error("Recommendation error:", error);
@@ -97,4 +95,4 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       error: error.message,
     });
   }
-};
+}
