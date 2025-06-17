@@ -49,7 +49,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     const randomProductId = randomProduct._id;
 
     // Recommendation service URLs
-    const RECOMMENDATION_BASE_URL = "https://ac6a-154-178-148-59.ngrok-free.app";
+    const RECOMMENDATION_BASE_URL = "https://885e-154-186-166-1.ngrok-free.app";
     const collaborativeUrl = `${RECOMMENDATION_BASE_URL}/content?product_id=${randomProductId}`;
     const hybridUrl = `${RECOMMENDATION_BASE_URL}/hybrid?user_id=${user_id}`;
 
