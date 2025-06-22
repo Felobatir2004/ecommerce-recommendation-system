@@ -35,7 +35,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     // Get product details in the cart
     const cartProducts = await Product.find({ _id: { $in: cartProductIds } });
 
-    if (!cartProducts.length) {
+    if (!cartProducts.length) { 
       return res.status(200).json({
         collaborative: [],
         hybrid: [],
