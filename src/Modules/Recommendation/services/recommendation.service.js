@@ -61,7 +61,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
       axios.get(collaborativeUrl),
       axios.get(hybridUrl),
     ]);
-
+ 
     // Extract IDs from both responses
     const collaborativeProductIds =
       collaborativeRes.status === "fulfilled"
