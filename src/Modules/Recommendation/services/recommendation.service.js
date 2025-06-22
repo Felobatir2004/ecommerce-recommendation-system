@@ -25,7 +25,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
+/*
     const cartProducts = user.cart || [];
 
     if (cartProducts.length === 0) {
@@ -35,7 +35,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
         message: "Cart is empty. No recommendations can be generated.",
       });
     }
-
+*/
     // Pick a random product from the cart
     const randomProduct = cartProducts[Math.floor(Math.random() * cartProducts.length)];
     const randomProductId = randomProduct._id;
