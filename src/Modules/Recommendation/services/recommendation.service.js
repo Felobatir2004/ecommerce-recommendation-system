@@ -84,7 +84,7 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     ]);
 
     return res.status(200).json({
-      collaborative: shuffleArray(collaborativeProducts),
+      content: shuffleArray(collaborativeProducts),
       hybrid: shuffleArray(hybridProducts),
     });
   } catch (error) {
