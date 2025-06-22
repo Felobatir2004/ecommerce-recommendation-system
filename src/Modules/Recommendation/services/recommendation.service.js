@@ -25,9 +25,9 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-/*
-    const cartProducts = user.cart || [];
 
+    const cartProducts = user.cart || [];
+/*
     if (cartProducts.length === 0) {
       return res.status(200).json({
         collaborative: [],
