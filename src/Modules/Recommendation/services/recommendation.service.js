@@ -99,12 +99,22 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
 
 export const getCollaborativeRecommendations = async (req, res) => {
   try {
-    const {userId} = req.params
+    const { userId } = req.params;
+
     // Step 1: Get user and populate cart items
     const user = await UserModel.findById(userId).populate("cart");
 
+    // If user or cart not found or empty, return random products instead
     if (!user || !user.cart || user.cart.length === 0) {
-      return res.status(404).json({ success: false, message: "No products in cart" });
+      const randomProducts = await Product.aggregate([
+        { $sample: { size: 30 } } // Get 10 random products
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        message: "Cart is empty. Showing random products instead.",
+        recommendedProducts: randomProducts
+      });
     }
 
     const cartProductIds = [];
