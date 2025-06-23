@@ -7,7 +7,7 @@ import axios from 'axios';
 const shuffleArray = (array) => {
   return array.sort(() => Math.random() - 0.5);
 };
-/*
+
 export const getCollaborativeRecommendations = async (req, res, next) => {
   const { user_id } = req.params;
 
@@ -95,8 +95,9 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     });
   }
 }
-  */
 
+
+/*
 export const getCollaborativeRecommendations = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -147,3 +148,4 @@ export const getCollaborativeRecommendations = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+*/
