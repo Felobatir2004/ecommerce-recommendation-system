@@ -7,7 +7,7 @@ import axios from 'axios';
 const shuffleArray = (array) => {
   return array.sort(() => Math.random() - 0.5);
 };
-
+/*
 export const getCollaborativeRecommendations = async (req, res, next) => {
   const { user_id } = req.params;
 
@@ -95,3 +95,45 @@ export const getCollaborativeRecommendations = async (req, res, next) => {
     });
   }
 }
+  */
+
+export const getCollaborativeRecommendations = async (req, res) => {
+  try {
+    const {userId} = req.params
+    // Step 1: Get user and populate cart items
+    const user = await UserModel.findById(userId).populate("cart");
+
+    if (!user || !user.cart || user.cart.length === 0) {
+      return res.status(404).json({ success: false, message: "No products in cart" });
+    }
+
+    const cartProductIds = [];
+    const brands = new Set();
+
+    for (const product of user.cart) {
+      if (product) {
+        cartProductIds.push(product._id);
+        brands.add(product.brand);
+      }
+    }
+
+    if (brands.size === 0) {
+      return res.status(200).json({ success: true, similarProducts: [] });
+    }
+
+    // Step 3: Find similar products by brand
+    const similarProducts = await Product.find({
+      brand: { $in: Array.from(brands) },
+      _id: { $nin: cartProductIds }
+    });
+
+    return res.status(200).json({
+      success: true,
+      similarProducts
+    });
+
+  } catch (error) {
+    console.error("Error fetching similar products:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
